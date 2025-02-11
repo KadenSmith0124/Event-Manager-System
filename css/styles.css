@@ -1,0 +1,48 @@
+/*CSS Reset*/
+body, header, nav, main, footer, h1, div, img{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+img{
+    max-width: 50%;
+    display: block;
+}
+
+/*Style rule for header*/
+header{
+    width: 25%;
+    float: left;
+}
+
+/*Style rule for naviation area*/
+nav{
+    width: 35%;
+    float: right;
+    margin: 3em 0 0 0 ;
+}
+
+nav ul{
+    list-style-type: none;
+    margin: 0;
+    text-align: center;
+}
+
+nav li{
+    display: inline-block;
+}
+
+nav li a{
+    display: block;
+    text-align: center;
+    padding: 0.5em 1em;
+    text-decoration: none;
+}
+
+/*Style rules for main content*/
+main{
+    clear: left;
+    padding: 2%;
+    font-size: 1.25em;
+}
