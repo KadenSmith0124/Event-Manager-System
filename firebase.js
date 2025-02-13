@@ -1,9 +1,8 @@
-// Import the functions you need from the SDKs you need
+import { getAuth } from "firebase/auth";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
+// Firebase configuration and initialization
 const firebaseConfig = {
   apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
   authDomain: "evnt-320a0.firebaseapp.com",
@@ -13,5 +12,19 @@ const firebaseConfig = {
   appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const fetchData = async () => {
+  if (auth.currentUser) {  // Ensure the user is authenticated
+    const querySnapshot = await getDocs(collection(db, "EventManagement"));
+    querySnapshot.forEach(doc => {
+      console.log(doc.id, "=>", doc.data());
+    });
+  } else {
+    console.error("User is not authenticated.");
+  }
+};
+
+fetchData();
