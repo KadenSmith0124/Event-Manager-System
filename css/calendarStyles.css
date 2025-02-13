@@ -1,0 +1,16 @@
+body {
+    text-align: center;
+}
+
+.table-calendar {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+tr:nth-child(even) {
+    background-color: lightgray;
+}
+
+tr {
+    border: 10px solid black;
+}

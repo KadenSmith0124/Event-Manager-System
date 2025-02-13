@@ -11,34 +11,18 @@ Dates: https://stackoverflow.com/questions/32540044/display-current-date-in-dd-m
 
 <head>
 	<title>Event Calendar</title>
+	<link rel="stylesheet" href="css/calendarStyles.css">
 </head>
 
 <body>
 	<!-- Main wrapper for the calendar application -->
 	<div class="wrapper">
 		<div class="container-calendar">
-			<div id="left">
-				<h1>Event Calendar</h1>
+			<div id="center">
+				<a href="index.html">Back</a>
+				<h1 id="center">Event Calendar</h1>
 			</div>
 			<div id="right">
-				<h3 id="monthAndYear"></h3>
-				<div class="button-container-calendar">
-					<button id="previous"
-							onclick="previous()">
-						‹
-					</button>
-					<button id="next"
-							onclick="next()">
-						›
-					</button>
-				</div>
-				<table class="table-calendar"
-					id="calendar"
-					data-lang="en">
-					<thead id="thead-month"></thead>
-					<!-- Table body for displaying the calendar -->
-					<tbody id="calendar-body"></tbody>
-				</table>
 				<div class="footer-container-calendar">
 					<label for="month">Jump To: </label>
 					<!-- Dropdowns to select a specific month and year -->
@@ -59,6 +43,24 @@ Dates: https://stackoverflow.com/questions/32540044/display-current-date-in-dd-m
 					<!-- Dropdown to select a specific year -->
 					<select id="year" onchange="jump()"></select>
 				</div>
+				<h3 id="monthAndYear"></h3>
+				<div class="button-container-calendar">
+					<button id="previous"
+							onclick="previous()">
+						‹
+					</button>
+					<button id="next"
+							onclick="next()">
+						›
+					</button>
+				</div>
+				<table class="table-calendar"
+					id="calendar"
+					data-lang="en">
+					<thead id="thead-month"></thead>
+					<!-- Table body for displaying the calendar -->
+					<tbody id="calendar-body"></tbody>
+				</table>
 			</div>
 		</div>
 	</div>
