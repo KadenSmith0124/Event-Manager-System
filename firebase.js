@@ -1,6 +1,7 @@
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
+import { getDatabase } from "firebase/database";
 
 // Firebase configuration and initialization
 const firebaseConfig = {
@@ -15,7 +16,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const database = getDatabase(app);
 
+export { database };
 const fetchData = async () => {
   if (auth.currentUser) {  // Ensure the user is authenticated
     const querySnapshot = await getDocs(collection(db, "EventManagement"));
