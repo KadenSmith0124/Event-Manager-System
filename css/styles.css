@@ -1,48 +1,16 @@
 /*CSS Reset*/
-body, header, nav, main, footer, h1, div, img{
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
+body, header, nav, main, footer, h1, div, img{margin: 0; padding: 0; border: 0;}
 
-img{
-    max-width: 50%;
-    display: block;
-}
+/*Style rules for body and images*/
+body{font-family: 'Knewave', serif; background-color: #00889d;}
+img{max-width: 75%; display: block; padding-left: 1em;}
 
-/*Style rule for header*/
-header{
-    width: 25%;
-    float: left;
-}
-
-/*Style rule for naviation area*/
-nav{
-    width: 35%;
-    float: right;
-    margin: 3em 0 0 0 ;
-}
-
-nav ul{
-    list-style-type: none;
-    margin: 0;
-    text-align: center;
-}
-
-nav li{
-    display: inline-block;
-}
-
-nav li a{
-    display: block;
-    text-align: center;
-    padding: 0.5em 1em;
-    text-decoration: none;
-}
+/*Style rule for navigation area*/
+nav{width: 70%; float: right;}
+nav ul{list-style-type: none; margin-top: -5em; margin-right: 1em; text-align: center;}
+nav li{display: inline-block; font-size: 1.5em; font-family: 'Knewave', serif; font-weight: bold;}
+nav li a{display: block; color: #c1deee; text-align: center;  text-decoration: none; padding: 0.5em;}
+nav a:hover{background-color: #009db6; border: 2px; border-color: #c1deee; border-style: solid;}
 
 /*Style rules for main content*/
-main{
-    clear: left;
-    padding: 2%;
-    font-size: 1.25em;
-}
+main{clear: left; background-color: #fff; padding: 2%; font-size: 1.25em;}
