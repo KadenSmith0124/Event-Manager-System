@@ -3,6 +3,7 @@ body, header, nav, main, footer, h1, div, img{margin: 0; padding: 0; border: 0;}
 
 /*Style rules for body and images*/
 body{font-family: 'Knewave', serif; background-color: #00889d;}
+main{font-family: Lucida, Arial, sans-serif;}
 img{max-width: 75%; display: block; padding-left: 1em;}
 
 /*Style rule for navigation area*/
