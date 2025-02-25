@@ -1,16 +1,27 @@
-body {
+.calendarCenter {
     text-align: center;
 }
 
 .table-calendar {
     margin-left: auto;
     margin-right: auto;
+    border: solid black;
 }
 
 tr:nth-child(even) {
     background-color: lightgray;
 }
 
-tr {
-    border: 10px solid black;
+td {
+    border: solid black;
+    text-align: center;
+}
+
+table {
+    width: 50%;
+}
+
+th {
+    text-align: center;
+    height: 70px;
 }
