@@ -28,15 +28,31 @@
         <div class="container">
             <h1 style="margin-bottom: 25%;">Login</h1>
             <label for="username"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="username" required>
+            <input type="text" id="username" placeholder="Enter Username" name="username" required autofocus>
 
             <label for="password"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="password" required>
+            <input type="password" id="password" placeholder="Enter Password" name="password" required autofocus>
 
-            <button type="submit">Login</button>
+            <button type="submit" onclick="submitLogin()">Login</button>
         </div>
     </main>
   </div>
 </body>
 
+<script> 
+import { handleSignIn } from 'C:\Users\S547310\Documents\GitHub\Event-Manager-System\firebase.js'
+
+function submitLogin(){
+  user = document.getElementById("username").value
+  pass = document.getElementById("password").value
+  if (user == null || pass == null) {
+   alert("Please Enter a Username or Password")
+   pass 
+  }
+  else {
+    handleSignIn(user, pass); 
+  }
+
+}
+</script>
 </html>

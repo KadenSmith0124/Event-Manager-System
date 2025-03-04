@@ -1,9 +1,10 @@
-import { getAuth } from "firebase/auth";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth"; // Added signInWithEmailAndPassword
 
-// Firebase configuration and initialization
+
+// ... your Firebase configuration ...
+
 const firebaseConfig = {
   apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
   authDomain: "evnt-320a0.firebaseapp.com",
@@ -11,23 +12,44 @@ const firebaseConfig = {
   storageBucket: "evnt-320a0.firebasestorage.app",
   messagingSenderId: "146980889296",
   appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+  // ... your config ...
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const database = getDatabase(app);
 
-export { database };
 const fetchData = async () => {
-  if (auth.currentUser) {  // Ensure the user is authenticated
-    const querySnapshot = await getDocs(collection(db, "EventManagement"));
-    querySnapshot.forEach(doc => {
-      console.log(doc.id, "=>", doc.data());
-    });
-  } else {
-    console.error("User is not authenticated.");
-  }
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log(user.uid);
+      getDocs(collection(db, "EventManagement"))
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            console.log(doc.id, "=>", doc.data());
+          });
+        })
+        .catch((error) => {
+          console.error("Error fetching data: ", error);
+        });
+    } else {
+      console.error("User is not authenticated.");
+      // Redirect to sign-in or show a message.
+    }
+  });
 };
 
-fetchData();
+
+export const handleSignIn = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    console.log("User signed in:", user.uid);
+    fetchData(); // Call fetchData AFTER successful sign-in
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.error("Sign-in error:", errorCode, errorMessage);
+  }
+};
+// Call handleSignIn with your email and password.  Replace these placeholders. 
