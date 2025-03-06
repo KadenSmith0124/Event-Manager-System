@@ -26,14 +26,16 @@
 
     <main style="text-align: center;">
         <div class="container">
-            <h1 style="margin-bottom: 25%;">Login</h1>
+            <h1 style="margin-bottom: 25%;">Create Account</h1>
             <label for="username"><b>Username</b></label>
             <input type="text" id="username" placeholder="Enter Username" name="username" required autofocus>
 
             <label for="password"><b>Password</b></label>
             <input type="password" id="password" placeholder="Enter Password" name="password" required autofocus>
+            <label for="repassword"><b>Re-Type Password</b></label>
+            <input type="password" id="repassword" placeholder="Re-Type Password" name="repassword" required autofocus>
 
-            <button type="button" id="loginButton">Login</button>
+            <button type="button" id="createAccount">Create Account</button>
         </div>
     </main>
   </div>
@@ -41,7 +43,7 @@
   <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
     // Import the necessary Firebase modules from the CDN
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 
     // Firebase config (replace with your actual Firebase config)
@@ -59,34 +61,39 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const handleSignIn = async (email, password) => {
+    const createUserAccount = async (email, password) => {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        // Create user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log("User signed in:", user.uid);
-        // fetchData(); // Uncomment this if you have a fetchData function
+        console.log("User created successfully:", user.uid);
+        alert("Account created successfully!");
+        // Redirect or perform further actions after successful registration.
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error("Sign-in error:", errorCode, errorMessage);
+        console.error("Error creating account:", errorCode, errorMessage);
+        alert("Error: " + errorMessage);
       }
     };
 
-    // This function will be called when the Login button is clicked
-    const submitLogin = () => {
-        const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
+    // Function to handle account creation when button is clicked
+    const handleCreateAccount = () => {
+      const email = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const repassword = document.getElementById("repassword").value;
 
-        if (user === "" || pass === "") {
-          alert("Please Enter a Username or Password");
-        } else {
-          handleSignIn(user, pass);
-        }
-      };
+      if (email === "" || password === "" || repassword === "") {
+        alert("Please fill out all fields.");
+      } else if (password !== repassword) {
+        alert("Passwords do not match.");
+      } else {
+        createUserAccount(email, password);
+      }
+    };
 
-      // Attach submitLogin function to the button's click event
-      const loginButton = document.getElementById("loginButton");
-      loginButton.addEventListener("click", submitLogin);
+    const createAccountButton = document.getElementById("createAccount");
+    createAccountButton.addEventListener("click", handleCreateAccount);
   </script>
 </body>
 
