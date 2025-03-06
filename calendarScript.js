@@ -7,17 +7,6 @@
 // years for the year select input
 
 // Initialize Firebase (replace with your Firebase configuration)
-const firebaseConfig = {
-    apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-    authDomain: "evnt-320a0.firebaseapp.com",
-    projectId: "evnt-320a0",
-    storageBucket: "evnt-320a0.firebasestorage.app",
-    messagingSenderId: "146980889296",
-    appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 function generate_year_range(start, end) {
     let years = "";
     for (let year = start; year <= end; year++) {
@@ -27,13 +16,13 @@ function generate_year_range(start, end) {
 }
 
 // Initialize date-related letiables
-today = new Date();
-currentMonth = today.getMonth();
-currentYear = today.getFullYear();
-selectYear = document.getElementById("year");
-selectMonth = document.getElementById("month");
+var today = new Date();
+var currentMonth = today.getMonth();
+var currentYear = today.getFullYear();
+var selectYear = document.getElementById("year");
+var selectMonth = document.getElementById("month");
 
-createYear = generate_year_range(1970, 2050);
+var createYear = generate_year_range(1970, 2050);
 
 document.getElementById("year").innerHTML = createYear;
 
