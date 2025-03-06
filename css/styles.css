@@ -24,6 +24,11 @@ td{border: solid black; text-align: center;}
 table{width: 50%;}
 th{text-align: center; height: 70px;}
 
+/*Style rules for create event*/
+.event-container{width: 75%; text-align: center;}
+.event-container h1{margin-bottom: 2%;}
+.center{margin: auto; width: 75%; padding: 10px;}
+
 /*Style rules for login*/
 input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}
 .container{width: 200px; height: 200px; margin: 3% 0 10% 42%;}
