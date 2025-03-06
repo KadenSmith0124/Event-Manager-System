@@ -84,52 +84,6 @@ function jump() {
 }
 
 // Function to display the calendar
-function showCalendar(month, year) {
-    let firstDay = new Date(year, month, 1).getDay();
-    tbl = document.getElementById("calendar-body");
-    tbl.innerHTML = "";
-    monthAndYear.innerHTML = months[month] + " " + year;
-    selectYear.value = year;
-    selectMonth.value = month;
-
-    let date = 1;
-    for (let i = 0; i < 6; i++) {
-        let row = document.createElement("tr");
-        for (let j = 0; j < 7; j++) {
-            if (i === 0 && j < firstDay) {
-                cell = document.createElement("td");
-                cellText = document.createTextNode("");
-                cell.appendChild(cellText);
-                row.appendChild(cell);
-            } else if (date > daysInMonth(month, year)) {
-                break;
-            } else {
-                cell = document.createElement("td");
-                cell.setAttribute("data-date", date);
-                cell.setAttribute("data-month", month + 1);
-                cell.setAttribute("data-year", year);
-                cell.setAttribute("data-month_name", months[month]);
-                cell.className = "date-picker";
-                cell.innerHTML = "<span>" + date + "</span";
-
-                if (
-                    date === today.getDate() &&
-                    year === today.getFullYear() &&
-                    month === today.getMonth()
-                ) {
-                    cell.className = "date-picker selected";
-                }
-
-                row.appendChild(cell);
-                date++;
-            }
-        }
-        tbl.appendChild(row);
-    }
-
-    displayReminders();
-}
-
 // Function to get the number of days in a month
 function daysInMonth(iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
