@@ -7,6 +7,22 @@
 // years for the year select input
 
 // Initialize Firebase (replace with your Firebase configuration)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+// Firebase configuration (copy the same config as in index.html)
+const firebaseConfig = {
+  apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+  authDomain: "evnt-320a0.firebaseapp.com",
+  projectId: "evnt-320a0",
+  storageBucket: "evnt-320a0.firebasestorage.app",
+  messagingSenderId: "146980889296",
+  appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 function generate_year_range(start, end) {
     let years = "";
     for (let year = start; year <= end; year++) {
@@ -56,13 +72,18 @@ $dataHead += "</tr>";
 
 document.getElementById("thead-month").innerHTML = $dataHead;
 
+const createYear = generate_year_range(1970, 2050);
+document.getElementById("year").innerHTML = createYear;
 monthAndYear = document.getElementById("monthAndYear");
+
 showCalendar(currentMonth, currentYear);
+
+selectYear.addEventListener('change', jump);
+selectMonth.addEventListener('change', jump);
 
 // Function to navigate to the next month
 function next() {
-    currentYear = currentMonth === 11 ?
-        currentYear + 1 : currentYear;
+    currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     currentMonth = (currentMonth + 1) % 12;
     showCalendar(currentMonth, currentYear);
 }
@@ -85,9 +106,6 @@ function jump() {
 
 // Function to display the calendar
 // Function to get the number of days in a month
-function daysInMonth(iMonth, iYear) {
-    return 32 - new Date(iYear, iMonth, 32).getDate();
-}
 
 // Initialize Firebase App
 // Fetch events for the specific month and year
