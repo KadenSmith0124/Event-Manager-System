@@ -5,6 +5,19 @@
 
 // Function to generate a range of 
 // years for the year select input
+
+// Initialize Firebase (replace with your Firebase configuration)
+const firebaseConfig = {
+    apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+    authDomain: "evnt-320a0.firebaseapp.com",
+    projectId: "evnt-320a0",
+    storageBucket: "evnt-320a0.firebasestorage.app",
+    messagingSenderId: "146980889296",
+    appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 function generate_year_range(start, end) {
     let years = "";
     for (let year = start; year <= end; year++) {
@@ -129,6 +142,100 @@ function showCalendar(month, year) {
 }
 
 // Function to get the number of days in a month
+function daysInMonth(iMonth, iYear) {
+    return 32 - new Date(iYear, iMonth, 32).getDate();
+}
+
+// Initialize Firebase App
+// Fetch events for the specific month and year
+async function fetchEventsForMonth(month, year) {
+    const startDate = new Date(year, month, 1); // First day of the month
+    const endDate = new Date(year, month + 1, 0); // Last day of the month
+
+    try {
+        const snapshot = await db.collection("events")
+            .where("date", ">=", startDate)
+            .where("date", "<=", endDate)
+            .get();
+
+        let events = [];
+        snapshot.forEach(doc => {
+            events.push(doc.data());
+        });
+
+        return events; // Return the fetched events
+    } catch (error) {
+        console.error("Error fetching events: ", error);
+        return [];
+    }
+}
+
+// Function to display the calendar with Firebase data
+async function showCalendar(month, year) {
+    let firstDay = new Date(year, month, 1).getDay();
+    tbl = document.getElementById("calendar-body");
+    tbl.innerHTML = "";
+    monthAndYear.innerHTML = months[month] + " " + year;
+    selectYear.value = year;
+    selectMonth.value = month;
+
+    let date = 1;
+    const events = await fetchEventsForMonth(month, year); // Get events from Firebase
+
+    // Create an object with the dates as keys and event data as values
+    const eventsByDate = {};
+    events.forEach(event => {
+        const eventDate = event.date.toDate(); // Assuming the event date is a Firestore Timestamp object
+        const day = eventDate.getDate();
+        if (!eventsByDate[day]) {
+            eventsByDate[day] = [];
+        }
+        eventsByDate[day].push(event);
+    });
+
+    for (let i = 0; i < 6; i++) {
+        let row = document.createElement("tr");
+        for (let j = 0; j < 7; j++) {
+            if (i === 0 && j < firstDay) {
+                cell = document.createElement("td");
+                cellText = document.createTextNode("");
+                cell.appendChild(cellText);
+                row.appendChild(cell);
+            } else if (date > daysInMonth(month, year)) {
+                break;
+            } else {
+                cell = document.createElement("td");
+                cell.setAttribute("data-date", date);
+                cell.setAttribute("data-month", month + 1);
+                cell.setAttribute("data-year", year);
+                cell.setAttribute("data-month_name", months[month]);
+                cell.className = "date-picker";
+                cell.innerHTML = "<span>" + date + "</span>";
+
+                if (eventsByDate[date]) {
+                    // Add an indicator if there are events on this day
+                    cell.classList.add("has-events");
+                    const eventDetails = eventsByDate[date].map(event => `<div class="event">${event.title}</div>`).join('');
+                    cell.innerHTML += `<div class="events-container">${eventDetails}</div>`;
+                }
+
+                if (
+                    date === today.getDate() &&
+                    year === today.getFullYear() &&
+                    month === today.getMonth()
+                ) {
+                    cell.className = "date-picker selected";
+                }
+
+                row.appendChild(cell);
+                date++;
+            }
+        }
+        tbl.appendChild(row);
+    }
+}
+
+// Fetch the number of days in the month
 function daysInMonth(iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
 }
