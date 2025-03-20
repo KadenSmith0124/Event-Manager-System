@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
   <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,24 +26,77 @@
 
     <main style="text-align: center; padding-bottom: 35%;">
       <div class="container">
-          <h1 style="margin-bottom: 25%;">Create My Event</h1>
-          <input type="text" placeholder="Event Address" name="event_address" required>
-          <input type="text" placeholder="City" name="event_city" required>
-          <input type="text" placeholder="State" name="event_state" required>
-          <input type="text" placeholder="Country" name="event_country" required>
-          <input type="text" placeholder="Name of Location" name="event_location" required>
-          <input type="text" placeholder="Room" name="event_room_num" required>
-          <input type="text" placeholder="Maximum Capacity" name="event_max_cap" required>
-          <input type="text" placeholder="Start" name="event_open_time" required>
-          <input type="text" placeholder="End" name="event_close_time" required>
-
-          
-          
+        <h1 style="margin-bottom: 25%;">Create My Event</h1>
+        <form id="createEventForm">
+          <input type="text" id="event_address" placeholder="Event Address" name="event_address" required>
+          <input type="text" id="event_city" placeholder="City" name="event_city" required>
+          <input type="text" id="event_state" placeholder="State" name="event_state" required>
+          <input type="text" id="event_country" placeholder="Country" name="event_country" required>
+          <input type="text" id="event_location" placeholder="Name of Location" name="event_location" required>
+          <input type="text" id="event_room_num" placeholder="Room" name="event_room_num" required>
+          <input type="text" id="event_max_cap" placeholder="Maximum Capacity" name="event_max_cap" required>
+          <input type="text" id="event_open_time" placeholder="Start" name="event_open_time" required>
+          <input type="text" id="event_close_time" placeholder="End" name="event_close_time" required>
 
           <button type="submit">Submit</button>
+        </form>
       </div>
-  </main>
+    </main>
   </div>
-</body>
 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+      authDomain: "evnt-320a0.firebaseapp.com",
+      projectId: "evnt-320a0",
+      storageBucket: "evnt-320a0.firebasestorage.app",
+      messagingSenderId: "146980889296",
+      appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function createEvent(userInput) {
+  try {
+    const LocCollectionRef = collection(db, 'Location');
+    const docRef = await addDoc(LocCollectionRef, userInput);
+    console.log('Location written with ID:', docRef.id);
+    alert('Event Created Successfully!');
+  } catch (e) {
+    console.error('Firestore Error:', e.message);
+    alert(`Error: ${e.message}`);
+  }
+}
+    
+
+    // Get form and attach event listener
+    const form = document.getElementById('createEventForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const userData = {
+        Address: document.getElementById('event_address').value,
+        City: document.getElementById('event_city').value,
+        State: document.getElementById('event_state').value,
+        Country: document.getElementById('event_country').value,
+        Location: document.getElementById('event_location').value,
+        Room: document.getElementById('event_room_num').value,
+        MaximumCapacity: document.getElementById('event_max_cap').value,
+        Start: document.getElementById('event_open_time').value,
+        End: document.getElementById('event_close_time').value,
+      };
+
+      await createEvent(userData);
+      form.reset(); // Clear form after submission
+    });
+  </script>
+
+</body>
 </html>
