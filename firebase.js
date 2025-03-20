@@ -52,4 +52,3 @@ export const handleSignIn = async (email, password) => {
     console.error("Sign-in error:", errorCode, errorMessage);
   }
 };
-// Call handleSignIn with your email and password.  Replace these placeholders. 

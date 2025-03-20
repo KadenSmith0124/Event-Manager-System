@@ -35,7 +35,7 @@
             <div class="calendarCenter">
               <label for="month">Jump To: </label>
               <!-- Dropdowns to select a specific month and year -->
-              <select id="month" onchange="jump()">
+              <select id="month">
                 <option value=0>Jan</option>
                 <option value=1>Feb</option>
                 <option value=2>Mar</option>
@@ -50,15 +50,14 @@
                 <option value=11>Dec</option>
               </select>
               <!-- Dropdown to select a specific year -->
-              <select id="year" onchange="jump()"></select>
+              <select id="year" onchange=""></select>
             </div>
             <h3 class="calendarCenter" id="monthAndYear"></h3>
             <div class="calendarCenter">
-              <button class="calendarCenter" id="previous" onclick="previous()">
+              <button class="calendarCenter" id="previous">
                 ‹
               </button>
-              <button class="calendarCenter" id="next" onclick="next()">›</button>
-            </div>
+              <button class="calendarCenter" id="next">›</button>
             <table class="table-calendar"
               id="calendar"
               data-lang="en">
@@ -73,9 +72,87 @@
     </main>
   </div>
   <script type="module">
+  const createYear = generate_year_range(1970, 2050);
+  document.getElementById("year").innerHTML = createYear;
+  
+  function generate_year_range(start, end) {
+    let years = "";
+    for (let year = start; year <= end; year++) {
+        years += "<option value='" + year + "'>" + year + "</option>";
+    }
+    return years;
+  }
+  let currentDate = new Date();
+  const dateInput = document.getElementById('dateInput');
+  const calendarDiv = document.getElementById('calendar');
+
+  function generateCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const startingDay = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
+
+    let table = '<table>';
+    table += '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
+
+    let dayCounter = 1;
+
+    for (let i = 0; i < 6; i++) { // Up to 6 weeks in a month
+      table += '<tr>';
+      for (let j = 0; j < 7; j++) {
+        if (i === 0 && j < startingDay) {
+          table += '<td></td>'; // Empty cells before the first day
+        } else if (dayCounter <= daysInMonth) {
+          const isToday = (
+            currentDate.getDate() === dayCounter &&
+            currentDate.getMonth() === new Date().getMonth() &&
+            currentDate.getFullYear() === new Date().getFullYear()
+          );
+          const todayClass = isToday ? ' class="today"' : '';
+          table += '<td' + todayClass + '>' + dayCounter + '</td>';
+          dayCounter++;
+        } else {
+          table += '<td></td>'; // Empty cells after the last day
+        }
+      }
+      table += '</tr>';
+      if (dayCounter > daysInMonth) {
+        break; // Stop if all days are rendered
+      }
+    }
+    table += '</table>';
+    calendarDiv.innerHTML = table;
+    dateInput.value = formatDate(String(year) + String(month) + String(1));
+  }
+
+  function changeMonth(change) {
+    currentDate.setMonth(currentDate.getMonth() + change);
+    generateCalendar();
+  }
+
+  function setDate() {
+     const newDate = new Date(dateInput.value);
+    if (!isNaN(newDate)) {
+      currentDate = newDate;
+      generateCalendar();
+    } else {
+      alert("Invalid date format. Please use YYYY-MM-DD.");
+    }
+  }
+
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  generateCalendar();
+
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-    const cors = require('cors');
     app.use(cors());  
     // Firebase configuration
     const firebaseConfig = {
@@ -87,6 +164,9 @@
         appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
     };
 
+      
+   const changeDate = document.getElementById("month");
+    changeDate.addEventListener("change", changeMonth());
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
 
@@ -95,7 +175,5 @@
   </script>
 
 </body>
-
-<script type="module" src="calendarScript.js"></script>
 
 </html>
