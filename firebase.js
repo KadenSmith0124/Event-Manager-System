@@ -39,17 +39,3 @@ const fetchData = async () => {
   });
 };
 
-
-export const handleSignIn = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    console.log("User signed in:", user.uid);
-    fetchData(); // Call fetchData AFTER successful sign-in
-  } catch (error) {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.error("Sign-in error:", errorCode, errorMessage);
-  }
-};
-// Call handleSignIn with your email and password.  Replace these placeholders. 
