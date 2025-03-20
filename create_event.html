@@ -20,26 +20,77 @@
 
     <nav>
       <ul>
+        <li style="float:right;"> <a href="login.html">Sign In</a></li>
         <li style="float: right;"><a href="create_event.html">CREATE MY EVENT</a></li>
       </ul>
     </nav>
 
-    <main style="text-align: center; padding-bottom: 35%;">
-      <div class="container">
-        <h1 style="margin-bottom: 25%;">Create My Event</h1>
-        <form id="createEventForm">
-          <input type="text" id="event_address" placeholder="Event Address" name="event_address" required>
-          <input type="text" id="event_city" placeholder="City" name="event_city" required>
-          <input type="text" id="event_state" placeholder="State" name="event_state" required>
-          <input type="text" id="event_country" placeholder="Country" name="event_country" required>
-          <input type="text" id="event_location" placeholder="Name of Location" name="event_location" required>
-          <input type="text" id="event_room_num" placeholder="Room" name="event_room_num" required>
-          <input type="text" id="event_max_cap" placeholder="Maximum Capacity" name="event_max_cap" required>
-          <input type="text" id="event_open_time" placeholder="Start" name="event_open_time" required>
-          <input type="text" id="event_close_time" placeholder="End" name="event_close_time" required>
-
+    <main>
+      <div class="event-container center">
+          <h1>Create My Event</h1>
+          <form id="dataEntry">
+          <input type="text" id="Address" placeholder="Event Address" name="event_address" required>
+          <input type="text" id="City" placeholder="City" name="event_city" required>
+          <select>
+            <option value="AL">Alabama</option>
+            <option value="AK">Alaska</option>
+            <option value="AZ">Arizona</option>
+            <option value="AR">Arkansas</option>
+            <option value="CA">California</option>
+            <option value="CO">Colorado</option>
+            <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
+            <option value="DC">District Of Columbia</option>
+            <option value="FL">Florida</option>
+            <option value="GA">Georgia</option>
+            <option value="HI">Hawaii</option>
+            <option value="ID">Idaho</option>
+            <option value="IL">Illinois</option>
+            <option value="IN">Indiana</option>
+            <option value="IA">Iowa</option>
+            <option value="KS">Kansas</option>
+            <option value="KY">Kentucky</option>
+            <option value="LA">Louisiana</option>
+            <option value="ME">Maine</option>
+            <option value="MD">Maryland</option>
+            <option value="MA">Massachusetts</option>
+            <option value="MI">Michigan</option>
+            <option value="MN">Minnesota</option>
+            <option value="MS">Mississippi</option>
+            <option value="MO">Missouri</option>
+            <option value="MT">Montana</option>
+            <option value="NE">Nebraska</option>
+            <option value="NV">Nevada</option>
+            <option value="NH">New Hampshire</option>
+            <option value="NJ">New Jersey</option>
+            <option value="NM">New Mexico</option>
+            <option value="NY">New York</option>
+            <option value="NC">North Carolina</option>
+            <option value="ND">North Dakota</option>
+            <option value="OH">Ohio</option>
+            <option value="OK">Oklahoma</option>
+            <option value="OR">Oregon</option>
+            <option value="PA">Pennsylvania</option>
+            <option value="RI">Rhode Island</option>
+            <option value="SC">South Carolina</option>
+            <option value="SD">South Dakota</option>
+            <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
+            <option value="UT">Utah</option>
+            <option value="VT">Vermont</option>
+            <option value="VA">Virginia</option>
+            <option value="WA">Washington</option>
+            <option value="WV">West Virginia</option>
+            <option value="WI">Wisconsin</option>
+            <option value="WY">Wyoming</option>
+          </select>
+          <input type="text" id="Name" placeholder="Name of Location" name="event_location" required>
+          <input type="number" id="Room#" placeholder="Room" name="event_room_num" required>
+          <input type="number" step="1" id="Max" placeholder="Maximum Capacity" name="event_max_cap" required>
+          <input type="time" id="STime" placeholder="Start Time" name="event_open_time" required>
+          <input type="time" id="ETime" placeholder="End Time" name="event_close_time" required>
           <button type="submit">Submit</button>
-        </form>
+          </form>
       </div>
     </main>
   </div>
@@ -99,4 +150,54 @@
   </script>
 
 </body>
+<script type="module">
+  import { getDatabase, push, ref } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+     authDomain: "evnt-320a0.firebaseapp.com",
+      projectId: "evnt-320a0",
+      storageBucket: "evnt-320a0.firebasestorage.app",
+      messagingSenderId: "146980889296", 
+      appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+  }
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  
+  document.getElementById("dataEntry").addEventListener("submit", function (e) {
+    e.preventDefault();
+  
+
+  const address = document.getElementById("Address").value;
+  const city = document.getElementById("City").value;
+  const state = document.getElementById("State").value;
+  const name = document.getElementById("Name").value;
+  const room = document.getElementById("Room#").value;
+  const max = document.getElementById("Max").value;
+  const STime = document.getElementById("STime").value;
+  const ETime = document.getElementById("ETime").value;
+
+  const EventManagement = ref(database, "eventLocationData"); 
+    push(EventManagement, {
+      address: address,
+      city: city,
+      state: state,
+      country: country,
+      name: name,
+      room: room,
+      max: max,
+      timestamp: Date.now()
+    });
+    const TimeManagement = ref(database, "eventTimeData");
+    push(TimeManagement, { 
+    STime: STime,
+    ETime: ETime,
+    timestamp: Date.now()
+  });
+    document.getElementById("dataEntry").reset();
+
+  });
+</script>
+
 </html>

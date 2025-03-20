@@ -15,6 +15,8 @@ nav a:hover{background-color: #009db6; border: 2px; border-color: #c1deee; borde
 
 /*Style rules for main content*/
 main{clear: left; background-color: #fff; padding: 2%; font-size: 1.25em;}
+p{font-size: 0.5em;}
+span{text-decoration: underline;}
 
 /*Style rule for calendar section*/
 .calendarCenter{text-align: center;}
@@ -23,6 +25,11 @@ tr:nth-child(even){background-color: lightgray;}
 td{border: solid black; text-align: center;}
 table{width: 50%;}
 th{text-align: center; height: 70px;}
+
+/*Style rules for create event*/
+.event-container{width: 75%; text-align: center;}
+.event-container h1{margin-bottom: 2%;}
+.center{margin: auto; width: 75%; padding: 10px;}
 
 /*Style rules for login*/
 input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}

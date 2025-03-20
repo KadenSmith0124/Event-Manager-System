@@ -20,7 +20,8 @@
 
     <nav>
       <ul>
-        <li style="float: right;"><a href="create_event.html">CREATE MY EVENT</a></li>
+        <li style="float:right;"> <a href="login.html">Sign In</a></li>
+        <li style="float:right;"><a href="create_event.html">CREATE MY EVENT</a></li>
       </ul>
     </nav>
 
@@ -56,9 +57,7 @@
               <button class="calendarCenter" id="previous" onclick="previous()">
                 ‹
               </button>
-              <button class="calendarCenter" id="next" onclick="next()">
-                ›
-              </button>
+              <button class="calendarCenter" id="next" onclick="next()">›</button>
             </div>
             <table class="table-calendar"
               id="calendar"
@@ -73,8 +72,30 @@
 
     </main>
   </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+    const cors = require('cors');
+    app.use(cors());  
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+        authDomain: "evnt-320a0.firebaseapp.com",
+        projectId: "evnt-320a0",
+        storageBucket: "evnt-320a0.firebasestorage.app",
+        messagingSenderId: "146980889296",
+        appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Get Firestore instance
+    const db = getFirestore(app);
+  </script>
+
 </body>
 
-<script src="calendarScript.js"></script>
+<script type="module" src="calendarScript.js"></script>
 
 </html>

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
   
-  <title>Login</title>
+  <title>Create My Account</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -24,18 +24,19 @@
       </ul>
     </nav>
 
-    <main style="text-align: center;">
+    <main style="text-align: center;padding-bottom: 13%;" >
         <div class="container">
             <h1 style="margin-bottom: 25%;">Create Account</h1>
+            <form id="createUser">
             <label for="username"><b>Username</b></label>
-            <input type="text" id="username" placeholder="Enter Username" name="username" required autofocus>
+            <input type="text" id="username" placeholder="Enter Email Address" name="username" required autofocus>
 
             <label for="password"><b>Password</b></label>
             <input type="password" id="password" placeholder="Enter Password" name="password" required autofocus>
-            <label for="repassword"><b>Re-Type Password</b></label>
             <input type="password" id="repassword" placeholder="Re-Type Password" name="repassword" required autofocus>
 
             <button type="button" id="createAccount">Create Account</button>
+            </form>
         </div>
     </main>
   </div>
@@ -54,7 +55,6 @@
       storageBucket: "evnt-320a0.firebasestorage.app",
       messagingSenderId: "146980889296",
       appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-  // ... your config ...
 };
 
     // Initialize Firebase
@@ -68,6 +68,7 @@
         const user = userCredential.user;
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
+        window.location.href = "login.html";
         // Redirect or perform further actions after successful registration.
       } catch (error) {
         const errorCode = error.code;
@@ -94,6 +95,7 @@
 
     const createAccountButton = document.getElementById("createAccount");
     createAccountButton.addEventListener("click", handleCreateAccount);
+    document.getElementById("createUser").reset();
   </script>
 </body>
 

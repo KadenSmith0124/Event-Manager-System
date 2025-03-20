@@ -5,6 +5,26 @@
 
 // Function to generate a range of 
 // years for the year select input
+
+// Initialize Firebase (replace with your Firebase configuration)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+// Firebase configuration (copy the same config as in index.html)
+const firebaseConfig = {
+  apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+  authDomain: "evnt-320a0.firebaseapp.com",
+  projectId: "evnt-320a0",
+  storageBucket: "evnt-320a0.firebasestorage.app",
+  messagingSenderId: "146980889296",
+  appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+};
+
+const cors = require('cors');
+app.use(cors());
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 function generate_year_range(start, end) {
     let years = "";
     for (let year = start; year <= end; year++) {
@@ -14,13 +34,13 @@ function generate_year_range(start, end) {
 }
 
 // Initialize date-related letiables
-today = new Date();
-currentMonth = today.getMonth();
-currentYear = today.getFullYear();
-selectYear = document.getElementById("year");
-selectMonth = document.getElementById("month");
+var today = new Date();
+var currentMonth = today.getMonth();
+var currentYear = today.getFullYear();
+var selectYear = document.getElementById("year");
+var selectMonth = document.getElementById("month");
 
-createYear = generate_year_range(1970, 2050);
+var createYear = generate_year_range(1970, 2050);
 
 document.getElementById("year").innerHTML = createYear;
 
@@ -54,13 +74,18 @@ $dataHead += "</tr>";
 
 document.getElementById("thead-month").innerHTML = $dataHead;
 
+const createYear = generate_year_range(1970, 2050);
+document.getElementById("year").innerHTML = createYear;
 monthAndYear = document.getElementById("monthAndYear");
+
 showCalendar(currentMonth, currentYear);
+
+selectYear.addEventListener('change', jump);
+selectMonth.addEventListener('change', jump);
 
 // Function to navigate to the next month
 function next() {
-    currentYear = currentMonth === 11 ?
-        currentYear + 1 : currentYear;
+    currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     currentMonth = (currentMonth + 1) % 12;
     showCalendar(currentMonth, currentYear);
 }
@@ -82,7 +107,34 @@ function jump() {
 }
 
 // Function to display the calendar
-function showCalendar(month, year) {
+// Function to get the number of days in a month
+
+// Initialize Firebase App
+// Fetch events for the specific month and year
+async function fetchEventsForMonth(month, year) {
+    const startDate = new Date(year, month, 1); // First day of the month
+    const endDate = new Date(year, month + 1, 0); // Last day of the month
+
+    try {
+        const snapshot = await db.collection("events")
+            .where("date", ">=", startDate)
+            .where("date", "<=", endDate)
+            .get();
+
+        let events = [];
+        snapshot.forEach(doc => {
+            events.push(doc.data());
+        });
+
+        return events; // Return the fetched events
+    } catch (error) {
+        console.error("Error fetching events: ", error);
+        return [];
+    }
+}
+
+// Function to display the calendar with Firebase data
+async function showCalendar(month, year) {
     let firstDay = new Date(year, month, 1).getDay();
     tbl = document.getElementById("calendar-body");
     tbl.innerHTML = "";
@@ -91,6 +143,19 @@ function showCalendar(month, year) {
     selectMonth.value = month;
 
     let date = 1;
+    const events = await fetchEventsForMonth(month, year); // Get events from Firebase
+
+    // Create an object with the dates as keys and event data as values
+    const eventsByDate = {};
+    events.forEach(event => {
+        const eventDate = event.date.toDate(); // Assuming the event date is a Firestore Timestamp object
+        const day = eventDate.getDate();
+        if (!eventsByDate[day]) {
+            eventsByDate[day] = [];
+        }
+        eventsByDate[day].push(event);
+    });
+
     for (let i = 0; i < 6; i++) {
         let row = document.createElement("tr");
         for (let j = 0; j < 7; j++) {
@@ -108,7 +173,14 @@ function showCalendar(month, year) {
                 cell.setAttribute("data-year", year);
                 cell.setAttribute("data-month_name", months[month]);
                 cell.className = "date-picker";
-                cell.innerHTML = "<span>" + date + "</span";
+                cell.innerHTML = "<span>" + date + "</span>";
+
+                if (eventsByDate[date]) {
+                    // Add an indicator if there are events on this day
+                    cell.classList.add("has-events");
+                    const eventDetails = eventsByDate[date].map(event => `<div class="event">${event.title}</div>`).join('');
+                    cell.innerHTML += `<div class="events-container">${eventDetails}</div>`;
+                }
 
                 if (
                     date === today.getDate() &&
@@ -124,11 +196,9 @@ function showCalendar(month, year) {
         }
         tbl.appendChild(row);
     }
-
-    displayReminders();
 }
 
-// Function to get the number of days in a month
+// Fetch the number of days in the month
 function daysInMonth(iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
 }
