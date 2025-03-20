@@ -30,6 +30,7 @@ th{text-align: center; height: 70px;}
 .event-container{width: 75%; text-align: center;}
 .event-container h1{margin-bottom: 2%;}
 .center{margin: auto; width: 75%; padding: 10px;}
+select{width: 100%; border-color: #ccc; color: dimgray; height: 45px;}
 
 /*Style rules for login*/
 input[type=text], input[type=password]{width: 100%; padding: 12px 20px; margin: 8px 0; display: inline-block; border: 1px solid #ccc; box-sizing: border-box;}
