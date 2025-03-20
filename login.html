@@ -65,6 +65,7 @@
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log("User signed in:", user.uid);
+        window.location.href = "index.html";
         // fetchData(); // Uncomment this if you have a fetchData function
       } catch (error) {
         const errorCode = error.code;
@@ -84,6 +85,15 @@
           handleSignIn(user, pass);
         }
       };
+      const setAppCookie = () => firebase.auth().currentUser &&
+      firebase.auth().currentUser.getToken().then(token => {
+        cookies.set('token', token, {
+            domain: window.location.hostname,
+            expire: 1 / 24, // One hour
+            path: '/',
+            secure: true // If served over HTTPS
+        });
+    });
 
       // Attach submitLogin function to the button's click event
       const loginButton = document.getElementById("loginButton");

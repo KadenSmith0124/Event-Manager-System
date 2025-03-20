@@ -68,6 +68,7 @@
         const user = userCredential.user;
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
+        window.location.href = "login.html";
         // Redirect or perform further actions after successful registration.
       } catch (error) {
         const errorCode = error.code;

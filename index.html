@@ -20,7 +20,8 @@
 
     <nav>
       <ul>
-        <li style="float: right;"><a href="create_event.html">CREATE MY EVENT</a></li>
+        <li style="float:right;"> <a href="login.html">Sign In</a></li>
+        <li style="float:right;"><a href="create_event.html">CREATE MY EVENT</a></li>
       </ul>
     </nav>
 
@@ -74,7 +75,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-
+    const cors = require('cors');
+    app.use(cors());  
     // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
