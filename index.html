@@ -5,8 +5,8 @@
   <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+
   <title>Home Page</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
@@ -14,7 +14,7 @@
 
 <body>
   <div id="container">
-    <header style="display: inline-block;">
+    <header>
       <a href="index.html"><img src="images/logo.png" alt="Munky Bizness logo"></a>
     </header>
 
@@ -31,149 +31,134 @@
           <div id="center">
             <h1 class="calendarCenter">Event Calendar</h1>
           </div>
+
           <div id="right">
             <div class="calendarCenter">
               <label for="month">Jump To: </label>
               <!-- Dropdowns to select a specific month and year -->
-              <select id="month">
-                <option value=0>Jan</option>
-                <option value=1>Feb</option>
-                <option value=2>Mar</option>
-                <option value=3>Apr</option>
-                <option value=4>May</option>
-                <option value=5>Jun</option>
-                <option value=6>Jul</option>
-                <option value=7>Aug</option>
-                <option value=8>Sep</option>
-                <option value=9>Oct</option>
-                <option value=10>Nov</option>
-                <option value=11>Dec</option>
-              </select>
-              <!-- Dropdown to select a specific year -->
-              <select id="year" onchange=""></select>
+              <select id="month"></select>
+              <select id="year"></select>
             </div>
+
             <h3 class="calendarCenter" id="monthAndYear"></h3>
+            
             <div class="calendarCenter">
-              <button class="calendarCenter" id="previous">
-                ‹
-              </button>
+              <button class="calendarCenter" id="previous">‹</button>
               <button class="calendarCenter" id="next">›</button>
-            <table class="table-calendar"
-              id="calendar"
-              data-lang="en">
+            </div>
+
+            <table class="table-calendar" id="calendar">
               <thead id="thead-month"></thead>
-              <!-- Table body for displaying the calendar -->
               <tbody id="calendar-body"></tbody>
             </table>
           </div>
         </div>
       </div>
-
     </main>
   </div>
+
   <script type="module">
-  const createYear = generate_year_range(1970, 2050);
-  document.getElementById("year").innerHTML = createYear;
-  
-  function generate_year_range(start, end) {
-    let years = "";
-    for (let year = start; year <= end; year++) {
-        years += "<option value='" + year + "'>" + year + "</option>";
-    }
-    return years;
-  }
-  let currentDate = new Date();
-  const dateInput = document.getElementById('dateInput');
-  const calendarDiv = document.getElementById('calendar');
-
-  function generateCalendar() {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-    const daysInMonth = lastDayOfMonth.getDate();
-    const startingDay = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
-
-    let table = '<table>';
-    table += '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
-
-    let dayCounter = 1;
-
-    for (let i = 0; i < 6; i++) { // Up to 6 weeks in a month
-      table += '<tr>';
-      for (let j = 0; j < 7; j++) {
-        if (i === 0 && j < startingDay) {
-          table += '<td></td>'; // Empty cells before the first day
-        } else if (dayCounter <= daysInMonth) {
-          const isToday = (
-            currentDate.getDate() === dayCounter &&
-            currentDate.getMonth() === new Date().getMonth() &&
-            currentDate.getFullYear() === new Date().getFullYear()
-          );
-          const todayClass = isToday ? ' class="today"' : '';
-          table += '<td' + todayClass + '>' + dayCounter + '</td>';
-          dayCounter++;
-        } else {
-          table += '<td></td>'; // Empty cells after the last day
+    // Populate year dropdown
+    function generateYearRange(start, end) {
+        let years = "";
+        for (let year = start; year <= end; year++) {
+            years += `<option value="${year}">${year}</option>`;
         }
-      }
-      table += '</tr>';
-      if (dayCounter > daysInMonth) {
-        break; // Stop if all days are rendered
-      }
+        return years;
     }
-    table += '</table>';
-    calendarDiv.innerHTML = table;
-    dateInput.value = formatDate(String(year) + String(month) + String(1));
-  }
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-  function changeMonth(change) {
-    currentDate.setMonth(currentDate.getMonth() + change);
-    generateCalendar();
-  }
-
-  function setDate() {
-     const newDate = new Date(dateInput.value);
-    if (!isNaN(newDate)) {
-      currentDate = newDate;
-      generateCalendar();
-    } else {
-      alert("Invalid date format. Please use YYYY-MM-DD.");
+    // Populate month dropdown
+    function populateMonthDropdown() {
+        const monthDropdown = document.getElementById("month");
+        months.forEach((month, index) => {
+            monthDropdown.innerHTML += `<option value="${index}">${month}</option>`;
+        });
     }
-  }
 
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-  generateCalendar();
+    // Generate Calendar
+    function generateCalendar() {
+        const year = parseInt(document.getElementById("year").value);
+        const month = parseInt(document.getElementById("month").value);
 
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
-    app.use(cors());  
-    // Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-        authDomain: "evnt-320a0.firebaseapp.com",
-        projectId: "evnt-320a0",
-        storageBucket: "evnt-320a0.firebasestorage.app",
-        messagingSenderId: "146980889296",
-        appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-    };
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+        const daysInMonth = lastDayOfMonth.getDate();
+        const startingDay = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
 
-      
-   const changeDate = document.getElementById("month");
-    changeDate.addEventListener("change", changeMonth());
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
+        let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
+        let dayCounter = 1;
 
-    // Get Firestore instance
-    const db = getFirestore(app);
+        for (let i = 0; i < 6; i++) { // Up to 6 weeks in a month
+            table += '<tr>';
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 && j < startingDay) {
+                    table += '<td></td>'; // Empty cells before first day
+                } else if (dayCounter <= daysInMonth) {
+                    table += `<td>${dayCounter}</td>`;
+                    dayCounter++;
+                } else {
+                    table += '<td></td>'; // Empty cells after last day
+                }
+            }
+            table += '</tr>';
+            if (dayCounter > daysInMonth) {
+                break; // Stop if all days are rendered
+            }
+        }
+
+        document.getElementById("calendar-body").innerHTML = table;
+    }
+
+    // Change month function
+    function changeMonth(direction) {
+        let monthDropdown = document.getElementById("month");
+        let yearDropdown = document.getElementById("year");
+
+        let newMonth = parseInt(monthDropdown.value) + direction;
+        let newYear = parseInt(yearDropdown.value);
+
+        if (newMonth < 0) {
+            newMonth = 11; // Go to December of the previous year
+            newYear--;
+        } else if (newMonth > 11) {
+            newMonth = 0; // Go to January of the next year
+            newYear++;
+        }
+
+        monthDropdown.value = newMonth;
+        yearDropdown.value = newYear;
+
+        generateCalendar();
+    }
+
+    // Initialize everything
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("year").innerHTML = generateYearRange(1970, 2050);
+        populateMonthDropdown();
+
+        // Set current date in dropdowns
+        const today = new Date();
+        document.getElementById("month").value = today.getMonth();
+        document.getElementById("year").value = today.getFullYear();
+
+        // Generate initial calendar
+        generateCalendar();
+
+        // Event listeners for buttons
+        document.getElementById("previous").addEventListener("click", function () {
+            changeMonth(-1); // Move one month back
+        });
+
+        document.getElementById("next").addEventListener("click", function () {
+            changeMonth(1); // Move one month forward
+        });
+
+        // Event listeners for dropdowns
+        document.getElementById("month").addEventListener("change", generateCalendar);
+        document.getElementById("year").addEventListener("change", generateCalendar);
+    });
   </script>
 
 </body>
-
 </html>
