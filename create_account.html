@@ -24,10 +24,16 @@
       </ul>
     </nav>
 
-    <main style="text-align: center;padding-bottom: 13%;" >
+    <main style="text-align: center;padding-bottom: 20%;" >
         <div class="container">
             <h1 style="margin-bottom: 25%;">Create Account</h1>
             <form id="createUser">
+              <label for="name"><b>Name</b></label>
+              <input type="text" id="name" placeholder="Enter First Name" name="name" required autofocus>  
+
+            <label for="company"><b>Company Name</b></label>
+            <input type="text" id="compnany" placeholder="Enter Company Name" name="company name" required autofocus>
+
             <label for="username"><b>Username</b></label>
             <input type="text" id="username" placeholder="Enter Email Address" name="username" required autofocus>
 
@@ -61,10 +67,10 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    const createUserAccount = async (email, password) => {
+    const createUserAccount = async (email, password, name, company) => {
       try {
         // Create user with email and password
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password, name, company);
         const user = userCredential.user;
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
@@ -80,16 +86,18 @@
 
     // Function to handle account creation when button is clicked
     const handleCreateAccount = () => {
+      const name = document.getElementById("name").value;
+      const company = document.getElementById("compnany").value;
       const email = document.getElementById("username").value;
       const password = document.getElementById("password").value;
       const repassword = document.getElementById("repassword").value;
 
-      if (email === "" || password === "" || repassword === "") {
+      if (name === "" || company === "" || email === "" || password === "" || repassword === "") {
         alert("Please fill out all fields.");
       } else if (password !== repassword) {
         alert("Passwords do not match.");
       } else {
-        createUserAccount(email, password);
+        createUserAccount(email, password, name, company);
       }
     };
 
