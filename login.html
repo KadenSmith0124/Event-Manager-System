@@ -59,12 +59,14 @@
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log("User signed in:", user.uid);
+        alert("User Signed in!")
         window.location.href = "index.html";
         // fetchData(); // Uncomment this if you have a fetchData function
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error("Sign-in error:", errorCode, errorMessage);
+        alert("Sign In Failed")
       }
     };
 
