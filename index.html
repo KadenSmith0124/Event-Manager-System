@@ -1,52 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
   <title>Home Page</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
   <div id="container">
     <header>
       <a href="index.html"><img src="images/logo.png" alt="Munky Bizness logo"></a>
     </header>
-
     <nav>
       <ul>
-        <li style="float:right;"> <a href="login.html">SIGN IN</a></li>
+        <li style="float:right;"><a href="login.html">SIGN IN</a></li>
+        <li style="float:right;"><a href="create_event.html">CREATE MY EVENT</a></li>
       </ul>
     </nav>
-
     <main>
       <div class="wrapper">
         <div class="container-calendar">
           <div id="center">
             <h1 class="calendarCenter">Event Calendar</h1>
           </div>
-
           <div id="right">
             <div class="calendarCenter">
               <label for="month">Jump To: </label>
-              <!-- Dropdowns to select a specific month and year -->
               <select id="month"></select>
               <select id="year"></select>
             </div>
-
             <h3 class="calendarCenter" id="monthAndYear"></h3>
-            
             <div class="calendarCenter">
               <button class="calendarCenter" id="previous">‹</button>
               <button class="calendarCenter" id="next">›</button>
             </div>
-
-            <table class="table-calendar" id="calendar">
+            <table class="table-calendar" id="calendar" >
               <thead id="thead-month"></thead>
               <tbody id="calendar-body"></tbody>
             </table>
@@ -54,10 +44,23 @@
         </div>
       </div>
     </main>
+    <div id="createEvent" class="button">
+      <button id="button" onclick="location.href = 'create_event.html'">Create Event</button>
+    </div>
   </div>
-
   <script type="module">
-    // Populate year dropdown
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+
+  const firebaseConfig = {
+      apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+     authDomain: "evnt-320a0.firebaseapp.com",
+      projectId: "evnt-320a0",
+      storageBucket: "evnt-320a0.firebasestorage.app",
+      messagingSenderId: "146980889296", 
+      appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+  }
+  const app = initializeApp(firebaseConfig);
     function generateYearRange(start, end) {
         let years = "";
         for (let year = start; year <= end; year++) {
@@ -65,99 +68,93 @@
         }
         return years;
     }
+    
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-    // Populate month dropdown
+    
     function populateMonthDropdown() {
         const monthDropdown = document.getElementById("month");
         months.forEach((month, index) => {
             monthDropdown.innerHTML += `<option value="${index}">${month}</option>`;
         });
     }
-
-    // Generate Calendar
-    function generateCalendar() {
+    
+    async function generateCalendar() {
         const year = parseInt(document.getElementById("year").value);
         const month = parseInt(document.getElementById("month").value);
-
+        const database = getDatabase();
+        const eventsRef = ref(database, "events");
+        const snapshot = await get(eventsRef);
+        const events = snapshot.exists() ? snapshot.val() : {};
+        
         const firstDayOfMonth = new Date(year, month, 1);
         const lastDayOfMonth = new Date(year, month + 1, 0);
         const daysInMonth = lastDayOfMonth.getDate();
-        const startingDay = firstDayOfMonth.getDay(); // 0 (Sunday) to 6 (Saturday)
-
+        const startingDay = firstDayOfMonth.getDay();
+        
         let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
         let dayCounter = 1;
-
-        for (let i = 0; i < 6; i++) { // Up to 6 weeks in a month
+        
+        for (let i = 0; i < 6; i++) {
             table += '<tr>';
             for (let j = 0; j < 7; j++) {
                 if (i === 0 && j < startingDay) {
-                    table += '<td></td>'; // Empty cells before first day
+                    table += '<td></td>';
                 } else if (dayCounter <= daysInMonth) {
-                    table += `<td>${dayCounter}</td>`;
+                    let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+                    let hasEvent = events[formattedDate] ? " event-day" : "";
+                    table += `<td class="${hasEvent}">${dayCounter}</td>`;
                     dayCounter++;
                 } else {
-                    table += '<td></td>'; // Empty cells after last day
+                    table += '<td></td>';
                 }
             }
             table += '</tr>';
-            if (dayCounter > daysInMonth) {
-                break; // Stop if all days are rendered
-            }
+            if (dayCounter > daysInMonth) break;
         }
-
         document.getElementById("calendar-body").innerHTML = table;
     }
-
-    // Change month function
+    
+    function addEvent(date, eventName) {
+        const database = getDatabase();
+        generateCalendar();
+    }
+    
     function changeMonth(direction) {
         let monthDropdown = document.getElementById("month");
         let yearDropdown = document.getElementById("year");
-
         let newMonth = parseInt(monthDropdown.value) + direction;
         let newYear = parseInt(yearDropdown.value);
-
+        
         if (newMonth < 0) {
-            newMonth = 11; // Go to December of the previous year
+            newMonth = 11;
             newYear--;
         } else if (newMonth > 11) {
-            newMonth = 0; // Go to January of the next year
+            newMonth = 0;
             newYear++;
         }
-
         monthDropdown.value = newMonth;
         yearDropdown.value = newYear;
-
         generateCalendar();
     }
-
-    // Initialize everything
+    
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("year").innerHTML = generateYearRange(1970, 2050);
         populateMonthDropdown();
-
-        // Set current date in dropdowns
         const today = new Date();
         document.getElementById("month").value = today.getMonth();
         document.getElementById("year").value = today.getFullYear();
-
-        // Generate initial calendar
         generateCalendar();
-
-        // Event listeners for buttons
-        document.getElementById("previous").addEventListener("click", function () {
-            changeMonth(-1); // Move one month back
-        });
-
-        document.getElementById("next").addEventListener("click", function () {
-            changeMonth(1); // Move one month forward
-        });
-
-        // Event listeners for dropdowns
+        document.getElementById("previous").addEventListener("click", function () { changeMonth(-1); });
+        document.getElementById("next").addEventListener("click", function () { changeMonth(1); });
         document.getElementById("month").addEventListener("change", generateCalendar);
         document.getElementById("year").addEventListener("change", generateCalendar);
+
+        button.addEventListener("click", function() {
+        overlay.style.display = "createEvent";
+        });
+}
+        
     });
   </script>
-
 </body>
 </html>

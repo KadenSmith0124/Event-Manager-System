@@ -25,6 +25,7 @@
       <div class="event-container center">
           <h1>Create My Event</h1>
           <form id="dataEntry">
+            <input type="date" id="Date" placeholder="Date of Event" name="eventDate" required>
           <input type="text" id="Address" placeholder="Event Address" name="event_address" required>
           <input type="text" id="City" placeholder="City" name="event_city" required>
           <select id="State">
@@ -93,7 +94,7 @@
   </div>
 </body>
 <script type="module">
-  import { getDatabase, push, ref } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
+  import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 
   const firebaseConfig = {
@@ -106,11 +107,13 @@
   }
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
+
+// Get a database reference to our blog
   
   document.getElementById("dataEntry").addEventListener("submit", function (e) {
     e.preventDefault();
   
-
+  const date = document.getElementById("Date").value;
   const address = document.getElementById("Address").value;
   const city = document.getElementById("City").value;
   const state = document.getElementById("State").value;
@@ -120,22 +123,20 @@
   const STime = document.getElementById("STime").value;
   const ETime = document.getElementById("ETime").value;
 
-  const EventManagement = ref(database, "eventLocationData"); 
-    push(EventManagement, {
+  const eventRef = ref(database, 'events/' + name + " " + date);
+
+  set(eventRef, {
       address: address,
       city: city,
       state: state,
-      name: name,
       room: room,
       max: max,
+      date: date,
+      STime: STime,
+      ETime: ETime,
       timestamp: Date.now()
-    });
-    const TimeManagement = ref(database, "eventTimeData");
-    push(TimeManagement, { 
-    STime: STime,
-    ETime: ETime,
-    timestamp: Date.now()
   });
+
     document.getElementById("dataEntry").reset();
 
   });
