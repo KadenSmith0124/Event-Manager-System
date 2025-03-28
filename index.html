@@ -43,10 +43,15 @@
           </div>
         </div>
       </div>
+      <div id="eventModal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2 id="modalTitle">Create Event</h2>
+          <h4 id="modalDate"></h4>
+          <button id='createEventBtn'>Create Event</button>
+        </div>
+      </div>
     </main>
-    <div id="createEvent" class="button">
-      <button id="button" onclick="location.href = 'create_event.html'">Create Event</button>
-    </div>
   </div>
   <script type="module">
     import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
@@ -77,13 +82,14 @@
             monthDropdown.innerHTML += `<option value="${index}">${month}</option>`;
         });
     }
+
+    function generateCalendar() {
+    const year = parseInt(document.getElementById("year").value);
+    const month = parseInt(document.getElementById("month").value);
+    const database = getDatabase();
     
-    async function generateCalendar() {
-        const year = parseInt(document.getElementById("year").value);
-        const month = parseInt(document.getElementById("month").value);
-        const database = getDatabase();
-        const eventsRef = ref(database, "events");
-        const snapshot = await get(eventsRef);
+    const eventsRef = ref(database, "events");
+    get(eventsRef).then(snapshot => {
         const events = snapshot.exists() ? snapshot.val() : {};
         
         const firstDayOfMonth = new Date(year, month, 1);
@@ -102,7 +108,7 @@
                 } else if (dayCounter <= daysInMonth) {
                     let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
                     let hasEvent = events[formattedDate] ? " event-day" : "";
-                    table += `<td class="${hasEvent}">${dayCounter}</td>`;
+                    table += `<td class="calendar-cell${hasEvent}" data-date="${formattedDate}">${dayCounter}</td>`;
                     dayCounter++;
                 } else {
                     table += '<td></td>';
@@ -112,8 +118,23 @@
             if (dayCounter > daysInMonth) break;
         }
         document.getElementById("calendar-body").innerHTML = table;
-    }
-    
+
+        // Add event listeners to each cell
+        document.querySelectorAll(".calendar-cell").forEach(cell => {
+            cell.addEventListener("click", function () {
+                const selectedDate = this.getAttribute("data-date");
+                document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
+                
+                // Set the button link dynamically with the selected date
+                document.getElementById("createEventBtn").addEventListener("click", function () {
+                const selectedDate = document.getElementById("modalDate").innerText.split(" on ")[1]; 
+                window.location.href = `create_event.html?date=${selectedDate}`;
+});
+                document.getElementById("eventModal").style.display = "flex";
+            });
+        });
+    });
+}
     function addEvent(date, eventName) {
         const database = getDatabase();
         generateCalendar();
@@ -148,13 +169,22 @@
         document.getElementById("next").addEventListener("click", function () { changeMonth(1); });
         document.getElementById("month").addEventListener("change", generateCalendar);
         document.getElementById("year").addEventListener("change", generateCalendar);
+        });   
 
-        button.addEventListener("click", function() {
-        overlay.style.display = "createEvent";
-        });
-}
-        
-    );
+        document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("eventModal");
+    const closeBtn = document.querySelector(".close");
+
+    closeBtn.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
   </script>
 </body>
 </html>

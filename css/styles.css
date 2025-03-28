@@ -6,6 +6,39 @@ body{font-family: 'Knewave', serif; background-color: #00889d;}
 main{font-family: Lucida, Arial, sans-serif;}
 img{max-width: 75%; display: block; padding-left: 1em;}
 
+/* Modal Styling */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Content Box */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 300px;
+}
+
+/* Close Button */
+.close {
+    float: right;
+    font-size: 38px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: red;
+}
 /*Style rule for navigation area*/
 nav{width: 70%; float: right;}
 nav ul{list-style-type: none; margin-top: -5em; margin-right: 1em; text-align: center;}

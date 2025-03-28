@@ -109,10 +109,21 @@
   const database = getDatabase(app);
 
 // Get a database reference to our blog
-  
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+  const selectedDate = getQueryParam("date");
+  document.addEventListener("DOMContentLoaded", function () {
+    if (selectedDate) {
+        document.getElementById("Date").value = selectedDate;
+    }
+});
+
+
   document.getElementById("dataEntry").addEventListener("submit", function (e) {
     e.preventDefault();
-  
   const date = document.getElementById("Date").value;
   const address = document.getElementById("Address").value;
   const city = document.getElementById("City").value;
