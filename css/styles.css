@@ -53,6 +53,8 @@ span{text-decoration: underline;}
 
 /*Style rule for calendar section*/
 .calendarCenter{text-align: center;}
+.calendarCenter select{width: 5%;}
+#center{text-align: center; padding-bottom: 15px;}
 .table-calendar{margin-left: auto; margin-right: auto; border: solid black;}
 tr:nth-child(even){background-color: lightgray;}
 td{border: solid black; text-align: center;}
