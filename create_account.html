@@ -44,7 +44,7 @@
   <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
     // Import the necessary Firebase modules from the CDN
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword,updateProfile  } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 
     // Firebase config (replace with your actual Firebase config)
@@ -69,6 +69,7 @@
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
         window.location.href = "login.html";
+        await updateProfile(user, { displayName: name });
         // Redirect or perform further actions after successful registration.
       } catch (error) {
         const errorCode = error.code;
@@ -77,6 +78,8 @@
         alert("Error: " + errorMessage);
       }
     };
+   
+    
 
     // Function to handle account creation when button is clicked
     const handleCreateAccount = () => {

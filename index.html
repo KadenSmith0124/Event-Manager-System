@@ -15,7 +15,7 @@
     </header>
     <nav>
       <ul>
-        <li style="float:right;"><a href="login.html">SIGN IN</a></li>
+        <li style="float:right;" id="authButton"><a href="login.html">SIGN IN</a></li>
         <li style="float:right;"><a href="create_event.html">CREATE MY EVENT</a></li>
       </ul>
     </nav>
@@ -56,7 +56,7 @@
   <script type="module">
     import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
   const firebaseConfig = {
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
      authDomain: "evnt-320a0.firebaseapp.com",
@@ -73,7 +73,17 @@
         }
         return years;
     }
-    
+  
+    const auth = getAuth();
+
+
+    onAuthStateChanged(auth, (user) => {
+      const authButton = document.getElementById("authButton");
+      if (user) {
+        authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName }</a>`;
+      }
+    });
+
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
     function populateMonthDropdown() {
