@@ -4,13 +4,10 @@
   <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<<<<<<< Updated upstream
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
-  <title>Home Page</title>
-=======
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
   <title>Event Calendar</title>
->>>>>>> Stashed changes
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
+  <title>Home Page</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -62,14 +59,8 @@
   <script type="module">
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-<<<<<<< Updated upstream
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
   const firebaseConfig = {
-=======
-    import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-
-    const firebaseConfig = {
->>>>>>> Stashed changes
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
       authDomain: "evnt-320a0.firebaseapp.com",
       databaseURL: "https://evnt-320a0-default-rtdb.firebaseio.com",
@@ -95,19 +86,6 @@
         }
         return years;
     }
-<<<<<<< Updated upstream
-  
-    const auth = getAuth();
-
-
-    onAuthStateChanged(auth, (user) => {
-      const authButton = document.getElementById("authButton");
-      if (user) {
-        authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName || "Profile" }</a>`;
-      }
-    });
-=======
->>>>>>> Stashed changes
 
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
