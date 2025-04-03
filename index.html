@@ -4,8 +4,13 @@
   <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<<<<<<< Updated upstream
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
   <title>Home Page</title>
+=======
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap" rel="stylesheet">
+  <title>Event Calendar</title>
+>>>>>>> Stashed changes
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -24,10 +29,10 @@
         <div class="container-calendar">
           <div id="center">
             <h1 class="calendarCenter">Event Calendar</h1>
-            <label for="month">Jump To: </label>
           </div>
           <div id="right">
             <div class="calendarCenter">
+              <label for="month">Jump To: </label>
               <select id="month"></select>
               <select id="year"></select>
             </div>
@@ -36,7 +41,7 @@
               <button class="calendarCenter" id="previous">‹</button>
               <button class="calendarCenter" id="next">›</button>
             </div>
-            <table class="table-calendar" id="calendar" >
+            <table class="table-calendar" id="calendar">
               <thead id="thead-month"></thead>
               <tbody id="calendar-body"></tbody>
             </table>
@@ -53,19 +58,36 @@
       </div>
     </main>
   </div>
+  
   <script type="module">
-    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+<<<<<<< Updated upstream
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
   const firebaseConfig = {
+=======
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+    const firebaseConfig = {
+>>>>>>> Stashed changes
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-     authDomain: "evnt-320a0.firebaseapp.com",
+      authDomain: "evnt-320a0.firebaseapp.com",
+      databaseURL: "https://evnt-320a0-default-rtdb.firebaseio.com",
       projectId: "evnt-320a0",
-      storageBucket: "evnt-320a0.firebasestorage.app",
-      messagingSenderId: "146980889296", 
+      storageBucket: "evnt-320a0.appspot.com",
+      messagingSenderId: "146980889296",
       appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-  }
-  const app = initializeApp(firebaseConfig);
+    };
+
+    function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+    const company = getQueryParam("company").replace(/"/g, '');
     function generateYearRange(start, end) {
         let years = "";
         for (let year = start; year <= end; year++) {
@@ -73,6 +95,7 @@
         }
         return years;
     }
+<<<<<<< Updated upstream
   
     const auth = getAuth();
 
@@ -83,9 +106,11 @@
         authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName || "Profile" }</a>`;
       }
     });
+=======
+>>>>>>> Stashed changes
 
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    
+
     function populateMonthDropdown() {
         const monthDropdown = document.getElementById("month");
         months.forEach((month, index) => {
@@ -93,23 +118,31 @@
         });
     }
 
-    function generateCalendar() {
+    async function generateCalendar() {
     const year = parseInt(document.getElementById("year").value);
     const month = parseInt(document.getElementById("month").value);
     const database = getDatabase();
-    
     const eventsRef = ref(database, "events");
-    get(eventsRef).then(snapshot => {
+
+    try {
+        const snapshot = await get(eventsRef);
         const events = snapshot.exists() ? snapshot.val() : {};
-        
+
+        renderCalendar(year, month, events);
+    } catch (error) {
+        console.error("Error fetching event data:", error);
+    }
+}
+
+    function renderCalendar(year, month, events) {
         const firstDayOfMonth = new Date(year, month, 1);
         const lastDayOfMonth = new Date(year, month + 1, 0);
         const daysInMonth = lastDayOfMonth.getDate();
         const startingDay = firstDayOfMonth.getDay();
-        
+
         let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
         let dayCounter = 1;
-        
+
         for (let i = 0; i < 6; i++) {
             table += '<tr>';
             for (let j = 0; j < 7; j++) {
@@ -117,8 +150,16 @@
                     table += '<td></td>';
                 } else if (dayCounter <= daysInMonth) {
                     let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
-                    let hasEvent = events[formattedDate] ? " event-day" : "";
-                    table += `<td class="calendar-cell${hasEvent}" data-date="${formattedDate}">${dayCounter}</td>`;
+                    let eventName = events[company + " " + formattedDate] ? `"${events[company + " " + formattedDate].name}"` : ""
+                    let eventTime = events[company + " " + formattedDate] ? ` from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
+                    let eventAdd =  events[company + " " + formattedDate] ? ` at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
+                    let eventRoom = events[company + " " + formattedDate] ? ` Room #:${events[company + " " + formattedDate].room}` : "";
+                    table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`
+                    if (eventName != "") {
+                      table += `<details id="evText">${eventName}${eventTime}\n${eventAdd}\n${eventRoom}
+                                <summary>${company + " " + formattedDate}</summary></details>`
+                            }
+                      table += `</td>`;
                     dayCounter++;
                 } else {
                     table += '<td></td>';
@@ -127,35 +168,32 @@
             table += '</tr>';
             if (dayCounter > daysInMonth) break;
         }
+
         document.getElementById("calendar-body").innerHTML = table;
 
         // Add event listeners to each cell
         document.querySelectorAll(".calendar-cell").forEach(cell => {
             cell.addEventListener("click", function () {
+              const cellChild = cell.children
+              if (cellChild.length == 0) {
                 const selectedDate = this.getAttribute("data-date");
                 document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
-                
-                // Set the button link dynamically with the selected date
-                document.getElementById("createEventBtn").addEventListener("click", function () {
-                const selectedDate = document.getElementById("modalDate").innerText.split(" on ")[1]; 
-                window.location.href = `create_event.html?date=${selectedDate}`;
-});
+                const createEventBtn = document.getElementById("createEventBtn");
+                createEventBtn.onclick = function () {
+                    window.location.href = `create_event.html?date=${selectedDate}`;
+                };
                 document.getElementById("eventModal").style.display = "flex";
+              }
             });
         });
-    });
-}
-    function addEvent(date, eventName) {
-        const database = getDatabase();
-        generateCalendar();
     }
-    
+
     function changeMonth(direction) {
         let monthDropdown = document.getElementById("month");
         let yearDropdown = document.getElementById("year");
         let newMonth = parseInt(monthDropdown.value) + direction;
         let newYear = parseInt(yearDropdown.value);
-        
+
         if (newMonth < 0) {
             newMonth = 11;
             newYear--;
@@ -167,32 +205,43 @@
         yearDropdown.value = newYear;
         generateCalendar();
     }
-    
+
     document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("year").innerHTML = generateYearRange(1970, 2050);
+        document.getElementById("year").innerHTML = generateYearRange(2025, 2050);
         populateMonthDropdown();
         const today = new Date();
         document.getElementById("month").value = today.getMonth();
         document.getElementById("year").value = today.getFullYear();
         generateCalendar();
-        document.getElementById("previous").addEventListener("click", function () { changeMonth(-1); });
-        document.getElementById("next").addEventListener("click", function () { changeMonth(1); });
+
+        document.getElementById("previous").addEventListener("click", () => changeMonth(-1));
+        document.getElementById("next").addEventListener("click", () => changeMonth(1));
         document.getElementById("month").addEventListener("change", generateCalendar);
         document.getElementById("year").addEventListener("change", generateCalendar);
-        });   
-
+    })
         document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("eventModal");
     const closeBtn = document.querySelector(".close");
 
+    // Close modal when clicking on the close button (X)
     closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
 
+    // Close modal when clicking outside the modal content
     window.addEventListener("click", function (event) {
-        if (event.target === modal) {
+        if (event.target === modal ) {
             modal.style.display = "none";
         }
+    });
+
+    // Ensure modal opens properly
+    document.querySelectorAll(".calendar-cell").forEach(cell => {
+        cell.addEventListener("click", function () {
+          if (eventName != null) {
+            modal.style.display = "flex"; // Ensure display is correct
+          }
+        });
     });
 });
   </script>

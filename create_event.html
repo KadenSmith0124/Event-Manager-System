@@ -124,6 +124,7 @@ function getQueryParam(param) {
 }
 
   const selectedDate = getQueryParam("date");
+  const company = getQueryParam("company");
   document.addEventListener("DOMContentLoaded", function () {
     if (selectedDate) {
         document.getElementById("Date").value = selectedDate;
@@ -146,6 +147,7 @@ function getQueryParam(param) {
   const eventRef = ref(database, 'events/' + name + " " + date);
 
   set(eventRef, {
+      name: name,
       address: address,
       city: city,
       state: state,
