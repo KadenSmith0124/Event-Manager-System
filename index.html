@@ -30,6 +30,7 @@
           <div id="right">
             <div class="calendarCenter">
               <label for="month">Jump To: </label>
+              <label for="month">Jump To: </label>
               <select id="month"></select>
               <select id="year"></select>
             </div>
@@ -38,6 +39,7 @@
               <button class="calendarCenter" id="previous">‹</button>
               <button class="calendarCenter" id="next">›</button>
             </div>
+            <table class="table-calendar" id="calendar">
             <table class="table-calendar" id="calendar">
               <thead id="thead-month"></thead>
               <tbody id="calendar-body"></tbody>
@@ -56,6 +58,7 @@
     </main>
   </div>
   
+  
   <script type="module">
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
@@ -64,10 +67,25 @@
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
       authDomain: "evnt-320a0.firebaseapp.com",
       databaseURL: "https://evnt-320a0-default-rtdb.firebaseio.com",
+      authDomain: "evnt-320a0.firebaseapp.com",
+      databaseURL: "https://evnt-320a0-default-rtdb.firebaseio.com",
       projectId: "evnt-320a0",
       storageBucket: "evnt-320a0.appspot.com",
       messagingSenderId: "146980889296",
+      storageBucket: "evnt-320a0.appspot.com",
+      messagingSenderId: "146980889296",
       appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+    };
+
+    function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
+    const company = getQueryParam("company").replace(/"/g, '');
     };
 
     function getQueryParam(param) {
@@ -87,7 +105,9 @@
         return years;
     }
 
+
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 
     function populateMonthDropdown() {
         const monthDropdown = document.getElementById("month");
@@ -97,6 +117,7 @@
     }
 
     async function generateCalendar() {
+    async function generateCalendar() {
     const year = parseInt(document.getElementById("year").value);
     const month = parseInt(document.getElementById("month").value);
     const database = getDatabase();
@@ -104,7 +125,18 @@
 
     try {
         const snapshot = await get(eventsRef);
+
+    try {
+        const snapshot = await get(eventsRef);
         const events = snapshot.exists() ? snapshot.val() : {};
+
+        renderCalendar(year, month, events);
+    } catch (error) {
+        console.error("Error fetching event data:", error);
+    }
+}
+
+    function renderCalendar(year, month, events) {
 
         renderCalendar(year, month, events);
     } catch (error) {
@@ -118,8 +150,10 @@
         const daysInMonth = lastDayOfMonth.getDate();
         const startingDay = firstDayOfMonth.getDay();
 
+
         let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
         let dayCounter = 1;
+
 
         for (let i = 0; i < 6; i++) {
             table += '<tr>';
@@ -128,6 +162,16 @@
                     table += '<td></td>';
                 } else if (dayCounter <= daysInMonth) {
                     let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+                    let eventName = events[company + " " + formattedDate] ? `"${events[company + " " + formattedDate].name}"` : ""
+                    let eventTime = events[company + " " + formattedDate] ? ` from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
+                    let eventAdd =  events[company + " " + formattedDate] ? ` at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
+                    let eventRoom = events[company + " " + formattedDate] ? ` Room #:${events[company + " " + formattedDate].room}` : "";
+                    table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`
+                    if (eventName != "") {
+                      table += `<details id="evText">${eventName}${eventTime}\n${eventAdd}\n${eventRoom}
+                                <summary>${company + " " + formattedDate}</summary></details>`
+                            }
+                      table += `</td>`;
                     let eventName = events[company + " " + formattedDate] ? `"${events[company + " " + formattedDate].name}"` : ""
                     let eventTime = events[company + " " + formattedDate] ? ` from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
                     let eventAdd =  events[company + " " + formattedDate] ? ` at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
@@ -147,11 +191,14 @@
             if (dayCounter > daysInMonth) break;
         }
 
+
         document.getElementById("calendar-body").innerHTML = table;
 
         // Add event listeners to each cell
         document.querySelectorAll(".calendar-cell").forEach(cell => {
             cell.addEventListener("click", function () {
+              const cellChild = cell.children
+              if (cellChild.length == 0) {
               const cellChild = cell.children
               if (cellChild.length == 0) {
                 const selectedDate = this.getAttribute("data-date");
@@ -160,17 +207,24 @@
                 createEventBtn.onclick = function () {
                     window.location.href = `create_event.html?date=${selectedDate}`;
                 };
+                const createEventBtn = document.getElementById("createEventBtn");
+                createEventBtn.onclick = function () {
+                    window.location.href = `create_event.html?date=${selectedDate}`;
+                };
                 document.getElementById("eventModal").style.display = "flex";
+              }
               }
             });
         });
     }
+
 
     function changeMonth(direction) {
         let monthDropdown = document.getElementById("month");
         let yearDropdown = document.getElementById("year");
         let newMonth = parseInt(monthDropdown.value) + direction;
         let newYear = parseInt(yearDropdown.value);
+
 
         if (newMonth < 0) {
             newMonth = 11;
@@ -184,7 +238,9 @@
         generateCalendar();
     }
 
+
     document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("year").innerHTML = generateYearRange(2025, 2050);
         document.getElementById("year").innerHTML = generateYearRange(2025, 2050);
         populateMonthDropdown();
         const today = new Date();
@@ -194,23 +250,39 @@
 
         document.getElementById("previous").addEventListener("click", () => changeMonth(-1));
         document.getElementById("next").addEventListener("click", () => changeMonth(1));
+
+        document.getElementById("previous").addEventListener("click", () => changeMonth(-1));
+        document.getElementById("next").addEventListener("click", () => changeMonth(1));
         document.getElementById("month").addEventListener("change", generateCalendar);
         document.getElementById("year").addEventListener("change", generateCalendar);
+    })
     })
         document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("eventModal");
     const closeBtn = document.querySelector(".close");
 
     // Close modal when clicking on the close button (X)
+    // Close modal when clicking on the close button (X)
     closeBtn.addEventListener("click", function () {
         modal.style.display = "none";
     });
 
     // Close modal when clicking outside the modal content
+    // Close modal when clicking outside the modal content
     window.addEventListener("click", function (event) {
+        if (event.target === modal ) {
         if (event.target === modal ) {
             modal.style.display = "none";
         }
+    });
+
+    // Ensure modal opens properly
+    document.querySelectorAll(".calendar-cell").forEach(cell => {
+        cell.addEventListener("click", function () {
+          if (eventName != null) {
+            modal.style.display = "flex"; // Ensure display is correct
+          }
+        });
     });
 
     // Ensure modal opens properly
