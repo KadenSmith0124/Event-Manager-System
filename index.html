@@ -80,7 +80,7 @@
     onAuthStateChanged(auth, (user) => {
       const authButton = document.getElementById("authButton");
       if (user) {
-        authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName }</a>`;
+        authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName || "Profile" }</a>`;
       }
     });
 
