@@ -17,7 +17,7 @@
 
     <nav>
       <ul>
-        <li style="float:right;"> <a href="login.html">SIGN IN</a></li>
+        <li style="float:right;" id="authButton"><a href="login.html">SIGN IN</a></li>
       </ul>
     </nav>
 
@@ -96,7 +96,7 @@
 <script type="module">
   import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
   const firebaseConfig = {
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
      authDomain: "evnt-320a0.firebaseapp.com",
@@ -107,6 +107,15 @@
   }
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
+  const auth = getAuth();
+
+
+onAuthStateChanged(auth, (user) => {
+  const authButton = document.getElementById("authButton");
+  if (user) {
+    authButton.innerHTML = `<a href="profile.html" id="profileButton">${user.displayName || "Profile"}</a>`;
+  }
+});
 
 // Get a database reference to our blog
 function getQueryParam(param) {
