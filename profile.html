@@ -25,16 +25,16 @@
 
                 <form id="createUser">
                     <label for="name"><b>Name</b>
-                        <p>NamePlaceholder</p>
+                      <p id="userName">?</p>
                     </label>
-
+                  
                     <label for="company"><b>Company Name</b>
                         <p>CompanyPlaceholder</p>
                     </label>
 
-                    <label for="username"><b>Username</b>
-                        <p>EmailPlaceholder</p>
-                    </label>
+                    <label for="email"><b>Email</b>
+                        <p id="userEmail">Loading...</p>
+                      </label>
 
                     <label for="password"><b>Password</b></label>
                 </form>
@@ -44,7 +44,37 @@
     </div>
 
     <script type="module">
-    </script>
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+          authDomain: "evnt-320a0.firebaseapp.com",
+          projectId: "evnt-320a0",
+          storageBucket: "evnt-320a0.appspot.com",
+          messagingSenderId: "146980889296",
+          appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+        };
+      
+        // ✅ Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+      
+        const auth = getAuth(app);
+      
+        onAuthStateChanged(auth, (user) => {
+          console.log("Auth user:", user);
+      
+          if (user) {
+            document.getElementById("userName").textContent = user.displayName || "No name set";
+            document.getElementById("userEmail").textContent = user.email || "No email set"; // Show email
+          } else {
+            document.getElementById("userName").textContent = "Guest";
+          }
+        });
+        
+      </script>
+      
+  
 </body>
 
 </html>
