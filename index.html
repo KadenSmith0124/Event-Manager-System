@@ -45,18 +45,17 @@
           </div>
         </div>
       </div>
-      <div id="eventModal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2 id="modalTitle">Create Event</h2>
-          <h4 id="modalDate"></h4>
-          <button id='createEventBtn'>Create Event</button>
-        </div>
-      </div>
     </main>
   </div>
   
-  
+  <div id="eventModal" style="display: none;" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalDate">Create Event on ...</h2>
+      <button id="createEventBtn">Create Event</button>
+    </div>
+  </div>
+
   <script type="module">
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
@@ -139,7 +138,8 @@
                     let eventRoom = events[company + " " + formattedDate] ? ` Room #:${events[company + " " + formattedDate].room}` : "";
                     table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`
                     if (eventName != "") {
-                        table += `<details id="evText">${eventName}${eventTime}\n${eventAdd}\n${eventRoom}
+                        table += `<details id="evText">${eventName}
+                          ${eventTime}\n${eventAdd}\n${eventRoom}
                         <summary>${company + " " + formattedDate}</summary></details>`
                       }
                       table += `</td>`;
@@ -156,18 +156,19 @@
         // Add event listeners to each cell
         document.querySelectorAll(".calendar-cell").forEach(cell => {
             cell.addEventListener("click", function () {
-              const cellChild = cell.children
-              if (cellChild.length == 0) {
-                const selectedDate = this.getAttribute("data-date");
-                document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
-                const createEventBtn = document.getElementById("createEventBtn");
-                createEventBtn.onclick = function () {
-                    window.location.href = `create_event.html?date=${selectedDate}`;
-                };
-                document.getElementById("eventModal").style.display = "flex";
-              }
-            });
+  const hasEvent = this.querySelector("details");
+
+  if (!hasEvent) {
+    const selectedDate = this.getAttribute("data-date").trim();
+      document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
+        const createEventBtn = document.getElementById("createEventBtn");
+          createEventBtn.onclick = function () {
+            window.location.href = `create_event.html?date=${selectedDate}`;
+           };
+            document.getElementById("eventModal").style.display = "flex";
+           }
         });
+      });
     }
 
 
@@ -200,11 +201,9 @@
         document.getElementById("previous").addEventListener("click", () => changeMonth(-1));
         document.getElementById("next").addEventListener("click", () => changeMonth(1));
         document.getElementById("month").addEventListener("change", generateCalendar);
-        document.getElementById("year").addEventListener("change", generateCalendar);
-    })
-        document.addEventListener("DOMContentLoaded", function () {
-    const modal = document.getElementById("eventModal");
-    const closeBtn = document.querySelector(".close");
+        document.getElementById("year").addEventListener("change", generateCalendar)
+        const modal = document.getElementById("eventModal");
+        const closeBtn = document.querySelector(".close");
 
     // Close modal when clicking on the close button (X)
     closeBtn.addEventListener("click", function () {
