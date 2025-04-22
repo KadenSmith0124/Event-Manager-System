@@ -73,11 +73,10 @@
         alert("Account created successfully!");
         const loginRef = ref(database, 'login/' + company);
         set(loginRef, {
-      name: name,
-      company: company,
-      ID: user.uid,
-      timestamp: Date.now()
-  });
+          name: name,
+          company: company,
+          ID: user.uid,
+        });
         window.location.href = "login.html";
         await updateProfile(user, { displayName: name });
         // Redirect or perform further actions after successful registration.
@@ -113,5 +112,4 @@
     document.getElementById("createUser").reset();
   </script>
 </body>
-
 </html>

@@ -36,73 +36,66 @@
   <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
     // Import the necessary Firebase modules from the CDN
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
 
-    // Firebase config (replace with your actual Firebase config)
-    const firebaseConfig = {
-      apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-     authDomain: "evnt-320a0.firebaseapp.com",
-      projectId: "evnt-320a0",
-      storageBucket: "evnt-320a0.firebasestorage.app",
-      messagingSenderId: "146980889296",
-      appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-  // ... your config ...
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+    authDomain: "evnt-320a0.firebaseapp.com",
+    projectId: "evnt-320a0",
+    storageBucket: "evnt-320a0.appspot.com", // fixed typo
+    messagingSenderId: "146980889296",
+    appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+  };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const database = getDatabase(app);
 
-    const handleSignIn = async (email, password) => {
-      try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log("User signed in:", user.uid);
-        alert("User Signed in!")
-        window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(user.company)}`;
-      } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Sign-in error:", errorCode, errorMessage);
-        alert("Sign In Failed")
-      }
-    };
+  const handleSignIn = async (email, password) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-    onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("Logged in as:", user.email);
-    // You can use user.uid, user.displayName, etc.
-  } else {
-    window.location.href = "login.html" + "?company=" + `${user.company}`; // or wherever you want to redirect
-  }
-});
+      // Now retrieve the user's company from Firebase Realtime Database
+      const dbRef = ref(database);
+      const snapshot = await get(child(dbRef, `login/`));
 
-    // This function will be called when the Login button is clicked
-    const submitLogin = () => {
-        const user = document.getElementById("username").value;
-        const pass = document.getElementById("password").value;
-
-        if (user === "" || pass === "") {
-          alert("Please Enter a Username or Password");
-        } else {
-          handleSignIn(user, pass);
+      let userCompany = "";
+      if (snapshot.exists()) {
+        const companies = snapshot.val();
+        for (const company in companies) {
+          if (companies[company].ID === user.uid) {
+            userCompany = companies[company].company;
+            break;
+          }
         }
-      };
-      const setAppCookie = () => firebase.auth().currentUser &&
-      firebase.auth().currentUser.getToken().then(token => {
-        cookies.set('token', token, {
-            domain: window.location.hostname,
-            expire: 1 / 24, // One hour
-            path: '/',
-            secure: true // If served over HTTPS
-        });
-    });
+      }
 
-      // Attach submitLogin function to the button's click event
-      const loginButton = document.getElementById("loginButton");
-      loginButton.addEventListener("click", submitLogin);
-  </script>
+      alert("User signed in!");
+      window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(userCompany)}`;
+    } catch (error) {
+      console.error("Sign-in error:", error.code, error.message);
+      alert("Sign In Failed");
+    }
+  };
+
+  const submitLogin = () => {
+    const user = document.getElementById("username").value;
+    const pass = document.getElementById("password").value;
+
+    if (user === "" || pass === "") {
+      alert("Please Enter a Username and Password");
+    } else {
+      handleSignIn(user, pass);
+    }
+  };
+
+  // Attach event listener
+  const loginButton = document.getElementById("loginButton");
+  loginButton.addEventListener("click", submitLogin);
+</script>
 </body>
 
 </html>
