@@ -29,6 +29,7 @@ p{font-size: 0.5em;}
 span{text-decoration: underline;}
 
 .modal {
+    font-family: Lucida, Arial, sans-serif;
     display: none;
     position: fixed;
     z-index: 9999; /* 🍪 Keeps it on top */

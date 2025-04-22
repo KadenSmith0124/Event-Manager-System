@@ -46,7 +46,7 @@
     // Import the necessary Firebase modules from the CDN
     import { getAuth, createUserWithEmailAndPassword,updateProfile  } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-    
+    import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;    
 
     // Firebase config (replace with your actual Firebase config)
     const firebaseConfig = {
@@ -61,14 +61,23 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const database = getDatabase(app);
+
 
     const createUserAccount = async (email, password, name, company) => {
       try {
         // Create user with email and password
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password, name, company);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
+        const loginRef = ref(database, 'login/' + company);
+        set(loginRef, {
+      name: name,
+      company: company,
+      ID: user.uid,
+      timestamp: Date.now()
+  });
         window.location.href = "login.html";
         await updateProfile(user, { displayName: name });
         // Redirect or perform further actions after successful registration.

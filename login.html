@@ -36,7 +36,7 @@
   <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
     // Import the necessary Firebase modules from the CDN
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
 
     // Firebase config (replace with your actual Firebase config)
@@ -60,8 +60,7 @@
         const user = userCredential.user;
         console.log("User signed in:", user.uid);
         alert("User Signed in!")
-        window.location.href = "index.html";
-        // fetchData(); // Uncomment this if you have a fetchData function
+        window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(user.company)}`;
       } catch (error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -69,6 +68,15 @@
         alert("Sign In Failed")
       }
     };
+
+    onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("Logged in as:", user.email);
+    // You can use user.uid, user.displayName, etc.
+  } else {
+    window.location.href = "login.html" + "?company=" + `${user.company}`; // or wherever you want to redirect
+  }
+});
 
     // This function will be called when the Login button is clicked
     const submitLogin = () => {
