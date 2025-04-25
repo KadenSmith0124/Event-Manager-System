@@ -63,7 +63,7 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
     
-    const createUserAccount = async (email, password, name, company) => {
+    const createUserAccount = async (email, password) => {
       try {
         // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -98,12 +98,18 @@
       } else {
         set(loginRef, {
           name: name,
+          email: email,
           company: company,
+          ID:getRandomInt()
         });
-        createUserAccount(email, password, name, company);
+        createUserAccount(email, password);
       }
     };
-
+    function getRandomInt() {
+      var min = Math.ceil(1);
+      var max = Math.floor(1000);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
     const createAccountButton = document.getElementById("createAccount");
     createAccountButton.addEventListener("click", handleCreateAccount);
     document.getElementById("createUser").reset();
