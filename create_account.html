@@ -68,6 +68,12 @@
         // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+        set(loginRef, {
+          name: name,
+          email: email,
+          company: company,
+          ID: user.uid 
+        });
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
         window.location.href = "login.html";
@@ -96,20 +102,9 @@
       } else if (password !== repassword) {
         alert("Passwords do not match.");
       } else {
-        set(loginRef, {
-          name: name,
-          email: email,
-          company: company,
-          ID:getRandomInt()
-        });
         createUserAccount(email, password);
       }
     };
-    function getRandomInt() {
-      var min = Math.ceil(1);
-      var max = Math.floor(1000);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
     const createAccountButton = document.getElementById("createAccount");
     createAccountButton.addEventListener("click", handleCreateAccount);
     document.getElementById("createUser").reset();
