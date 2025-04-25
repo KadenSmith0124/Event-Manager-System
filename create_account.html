@@ -96,7 +96,7 @@
       } else if (password !== repassword) {
         alert("Passwords do not match.");
       } else {
-        push(loginRef, {
+        set(loginRef, {
           name: name,
           company: company,
         });
