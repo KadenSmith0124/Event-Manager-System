@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <!--Link to Knewave font-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,96 +17,92 @@
       <a href="index.html"><img src="images/logo.png" alt="Munky Bizness logo"></a>
     </header>
 
-    <main style="text-align: center;padding-bottom: 20%;" >
-        <div class="container">
-            <h1 style="margin-bottom: 25%;">Create Account</h1>
-            <form id="createUser">
-              <label for="name"><b>Name</b></label>
-              <input type="text" id="name" placeholder="Enter First Name" name="name" required autofocus>  
+    <main style="text-align: center; padding-bottom: 20%;">
+      <div class="container">
+        <h1 style="margin-bottom: 25%;">Create Account</h1>
+        <form id="createUser">
+          <label for="name"><b>Name</b></label>
+          <input type="text" id="name" placeholder="Enter First Name" name="name" required autofocus>  
 
-            <label for="company"><b>Company Name</b></label>
-            <input type="text" id="company" placeholder="Enter Company Name" name="company name" required autofocus>
+          <label for="company"><b>Company Name</b></label>
+          <input type="text" id="company" placeholder="Enter Company Name" name="company name" required>
 
-            <label for="username"><b>Username</b></label>
-            <input type="text" id="username" placeholder="Enter Email Address" name="username" required autofocus>
+          <label for="username"><b>Username</b></label>
+          <input type="text" id="username" placeholder="Enter Email Address" name="username" required>
 
-            <label for="password"><b>Password</b></label>
-            <input type="password" id="password" placeholder="Enter Password" name="password" required autofocus>
-            <input type="password" id="repassword" placeholder="Re-Type Password" name="repassword" required autofocus>
+          <label for="password"><b>Password</b></label>
+          <input type="password" id="password" placeholder="Enter Password" name="password" required>
+          <input type="password" id="repassword" placeholder="Re-Type Password" name="repassword" required>
 
-            <button type="button" id="createAccount">Create Account</button>
-            </form>
-        </div>
+          <button type="button" id="createAccount">Create Account</button>
+        </form>
+      </div>
     </main>
   </div>
 
-  <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
-    // Import the necessary Firebase modules from the CDN
-    import { getAuth, createUserWithEmailAndPassword,updateProfile  } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    // Firebase imports
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-    import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;    
+    import { getDatabase, set, ref } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
 
-    // Firebase config (replace with your actual Firebase config)
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-     authDomain: "evnt-320a0.firebaseapp.com",
+      authDomain: "evnt-320a0.firebaseapp.com",
       projectId: "evnt-320a0",
-      storageBucket: "evnt-320a0.firebasestorage.app",
+      storageBucket: "evnt-320a0.appspot.com",
       messagingSenderId: "146980889296",
       appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-};
+    };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const database = getDatabase(app);
-    
-    const createUserAccount = async (email, password) => {
+
+    const createUserAccount = async (email, password, name, company) => {
       try {
-        // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        set(loginRef, {
+
+        // Set display name in user profile
+        await updateProfile(user, { displayName: name });
+
+        // Store user data in Realtime Database using UID as key
+        const loginRef = ref(database, 'login/' + user.uid);
+        await set(loginRef, {
           name: name,
           email: email,
-          company: company,
-          ID: user.uid 
+          company: company
         });
+
         console.log("User created successfully:", user.uid);
         alert("Account created successfully!");
         window.location.href = "login.html";
-        await updateProfile(user, { displayName: name });
-        // Redirect or perform further actions after successful registration.
       } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.error("Error creating account:", errorCode, errorMessage);
-        alert("Error: " + errorMessage);
+        console.error("Error creating account:", error.code, error.message);
+        alert("Error: " + error.message);
       }
     };
-   
-    
 
-    // Function to handle account creation when button is clicked
     const handleCreateAccount = () => {
-      const name = document.getElementById("name").value;
-      const company = document.getElementById("company").value;
-      const email = document.getElementById("username").value;
+      const name = document.getElementById("name").value.trim();
+      const company = document.getElementById("company").value.trim();
+      const email = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value;
       const repassword = document.getElementById("repassword").value;
-      const loginRef = ref(database, 'login/' + company);
-      if (name === "" || company === "" || email === "" || password === "" || repassword === "") {
+
+      if (!name || !company || !email || !password || !repassword) {
         alert("Please fill out all fields.");
       } else if (password !== repassword) {
         alert("Passwords do not match.");
       } else {
-        createUserAccount(email, password);
+        createUserAccount(email, password, name, company);
       }
     };
-    const createAccountButton = document.getElementById("createAccount");
-    createAccountButton.addEventListener("click", handleCreateAccount);
-    document.getElementById("createUser").reset();
+
+    document.getElementById("createAccount").addEventListener("click", handleCreateAccount);
   </script>
 </body>
 </html>
