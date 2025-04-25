@@ -62,16 +62,9 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const database = getDatabase(app);
-
-
+    
     const createUserAccount = async (email, password, name, company) => {
       try {
-        const loginRef = ref(database, 'login/' + company);
-        set(loginRef, {
-          name: name,
-          company: company,
-          ID: user.uid,
-        });
         // Create user with email and password
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -97,12 +90,16 @@
       const email = document.getElementById("username").value;
       const password = document.getElementById("password").value;
       const repassword = document.getElementById("repassword").value;
-
+      const loginRef = ref(database, 'login/' + company);
       if (name === "" || company === "" || email === "" || password === "" || repassword === "") {
         alert("Please fill out all fields.");
       } else if (password !== repassword) {
         alert("Passwords do not match.");
       } else {
+        push(loginRef, {
+          name: name,
+          company: company,
+        });
         createUserAccount(email, password, name, company);
       }
     };
