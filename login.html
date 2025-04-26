@@ -60,14 +60,14 @@
 
       // retrieve user company
       const dbRef = ref(database);
-      const snapshot = await get(child(dbRef, `login/`));
+      const snapshot = await get(child(dbRef, `login/` + user.uid));
 
       let userCompany = "";
       if (snapshot.exists()) {
         const companies = snapshot.val();
         for (const company in companies) {
           if (companies[company].ID === user.uid) {
-            userCompafny = company;
+            userCompany = company;
             break;
     }
   }
