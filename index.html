@@ -133,9 +133,9 @@
                 } else if (dayCounter <= daysInMonth) {
                     let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
                     let eventName = events[company + " " + formattedDate] ? `"${events[company + " " + formattedDate].name}"` : ""
-                    let eventTime = events[company + " " + formattedDate] ? ` from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
-                    let eventAdd =  events[company + " " + formattedDate] ? ` at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
-                    let eventRoom = events[company + " " + formattedDate] ? ` Room #:${events[company + " " + formattedDate].room}` : "";
+                    let eventTime = events[company + " " + formattedDate] ? `from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
+                    let eventAdd =  events[company + " " + formattedDate] ?  `at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
+                    let eventRoom = events[company + " " + formattedDate] ?  `Room #:${events[company + " " + formattedDate].room}` : "";
                     table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`
                     if (eventName != "") {
                         table += `<details id="evText">${eventName}
@@ -162,9 +162,9 @@
     const selectedDate = this.getAttribute("data-date").trim();
       document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
         const createEventBtn = document.getElementById("createEventBtn");
-          createEventBtn.onclick = function () {
-            window.location.href = `create_event.html?date=${selectedDate}`;
-           };
+          createEventBtn.onclick = function ()  {
+            window.location.href = create_event.html?date=selectedDate
+           : ""};
             document.getElementById("eventModal").style.display = "flex";
            }
         });

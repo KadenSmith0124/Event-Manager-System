@@ -74,8 +74,8 @@
         await set(loginRef, {
           name: name,
           email: email,
-          company: company,
-          ID:user.uid
+          ID: user.uid,
+          company: company
         });
 
         console.log("User created successfully:", user.uid);

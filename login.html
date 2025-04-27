@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-  <!--Link to Knewave font-->
+  <!-- Link to Knewave and Fraunces fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Knewave&display=swap" rel="stylesheet">
-  
+
   <title>Login</title>
   <meta charset="utf-8">
   <link rel="stylesheet" href="css/styles.css">
@@ -19,83 +19,94 @@
     </header>
 
     <main style="text-align: center;">
-        <div class="container">
-            <h1 style="margin-bottom: 25%;">Login</h1>
-            <label for="username"><b>Username</b></label>
-            <input type="text" id="username" placeholder="Enter Username" name="username" required autofocus>
+      <div class="container">
+        <h1 style="margin-bottom: 25%;">Login</h1>
+        <label for="username"><b>Email</b></label>
+        <input type="email" id="username" placeholder="Enter Email Address" name="username" required autofocus>
 
-            <label for="password"><b>Password</b></label>
-            <input type="password" id="password" placeholder="Enter Password" name="password" required autofocus>
+        <label for="password"><b>Password</b></label>
+        <input type="password" id="password" placeholder="Enter Password" name="password" required>
 
-            <button type="button" id="loginButton">Login</button>
-            <p>Don't have an account? <span><a href="create_account.html">Create Account</a></span></p>
-        </div>
+        <button type="button" id="loginButton">Login</button>
+        <p>Don't have an account? <span><a href="create_account.html">Create Account</a></span></p>
+      </div>
     </main>
   </div>
 
-  <!-- Include the script for Firebase and the submitLogin function -->
   <script type="module">
-    // Import the necessary Firebase modules from the CDN
-  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+    // Firebase imports
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-    authDomain: "evnt-320a0.firebaseapp.com",
-    projectId: "evnt-320a0",
-    storageBucket: "evnt-320a0.appspot.com", // fixed typo
-    messagingSenderId: "146980889296",
-    appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
-  };
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
+      authDomain: "evnt-320a0.firebaseapp.com",
+      projectId: "evnt-320a0",
+      storageBucket: "evnt-320a0.appspot.com",
+      messagingSenderId: "146980889296",
+      appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const database = getDatabase(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const database = getDatabase(app);
 
-  const handleSignIn = async (email, password) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+    const handleSignIn = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-      // retrieve user company
-      const dbRef = ref(database);
-      const snapshot = await get(child(dbRef, `login/` + user.uid));
+    // Retrieve user company based on UID
+    const dbRef = ref(database);
+    const snapshot = await get(child(dbRef, 'login/' + user.uid));
 
-      let userCompany = "";
-      if (snapshot.exists()) {
-        const companies = snapshot.val();
-        for (const company in companies) {
-          if (companies[company].ID === user.uid) {
-            userCompany = company;
-            break;
+    if (snapshot.exists()) {
+      // Log the snapshot to check what is being returned
+      console.log("Snapshot Data: ", snapshot.val());
+      
+      // Make sure the company key exists in the returned data
+      let userCompany = snapshot.val().company;
+
+      if (userCompany) {
+        console.log("Company found: ", userCompany);
+        alert("User signed in!");
+        window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(userCompany)}`;
+      } else {
+        alert("Company info not found for this user.");
+      }
+    } else {
+      console.log("No data found for this user.");
+      alert("No company info found for this user.");
+    }
+  } catch (error) {
+    console.error("Sign-in error:", error.code, error.message);
+    if (error.code === 'auth/user-not-found') {
+      alert("No user found with this email.");
+    } else if (error.code === 'auth/wrong-password') {
+      alert("Incorrect password.");
+    } else {
+      alert("Sign In Failed: " + error.message);
     }
   }
-}
-      console.log("Redirecting with company:", userCompany);
-      alert("User signed in!");
-      window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(userCompany)}`;
-    } catch (error) {
-      console.error("Sign-in error:", error.code, error.message);
-      alert("Sign In Failed");
-    }
-  };
+};
 
-  const submitLogin = () => {
-    const user = document.getElementById("username").value;
-    const pass = document.getElementById("password").value;
+    const submitLogin = () => {
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
 
-    if (user === "" || pass === "") {
-      alert("Please Enter a Username and Password");
-    } else {
-      handleSignIn(user, pass);
-    }
-  };
+      if (!user || !pass) {
+        alert("Please enter both email and password.");
+      } else {
+        handleSignIn(user, pass);
+      }
+    };
 
-  // Attach event listener
-  const loginButton = document.getElementById("loginButton");
-  loginButton.addEventListener("click", submitLogin);
-</script>
+    // Attach event listener to login button
+    document.getElementById("loginButton").addEventListener("click", submitLogin);
+  </script>
 </body>
 
 </html>
