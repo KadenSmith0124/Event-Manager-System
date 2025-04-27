@@ -70,7 +70,7 @@
         await updateProfile(user, { displayName: name });
 
         // Store user data in Realtime Database using UID as key
-        const loginRef = ref(database, 'login/' + company);
+        const loginRef = ref(database, 'login/' + user.uid);
         await set(loginRef, {
           name: name,
           email: email,
