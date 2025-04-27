@@ -163,8 +163,8 @@
       document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
         const createEventBtn = document.getElementById("createEventBtn");
           createEventBtn.onclick = function ()  {
-            window.location.href = create_event.html?date=selectedDate
-           : ""};
+            window.location.href = `create_event.html?date=selectedDate`
+            };
             document.getElementById("eventModal").style.display = "flex";
            }
         });
