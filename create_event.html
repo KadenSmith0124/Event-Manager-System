@@ -87,20 +87,22 @@
           <input type="number" step="1" id="Max" placeholder="Maximum Capacity" name="event_max_cap" required>
           <input type="time" id="STime" placeholder="Start Time" name="event_open_time" required>
           <input type="time" id="ETime" placeholder="End Time" name="event_close_time" required>
-          <button type="submit">Submit</button>
+          <button type="submit" id="submit">Submit</button>
           </form>
       </div>
   </main>
   </div>
 </body>
 <script type="module">
-  import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
+  import { getDatabase, set, ref, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
   const firebaseConfig = {
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
-     authDomain: "evnt-320a0.firebaseapp.com",
+      authDomain: "evnt-320a0.firebaseapp.com",
       projectId: "evnt-320a0",
+      databaseURL: "https://evnt-320a0-default-rtdb.firebaseio.com",
       storageBucket: "evnt-320a0.firebasestorage.app",
       messagingSenderId: "146980889296", 
       appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
@@ -158,9 +160,10 @@
   const ETime = document.getElementById("ETime").value;
 
   const eventRef = ref(database, 'events/' + name + " " + date);
-
+  console.log(name, address, date)
+  alert('before')
   set(eventRef, {
-      name: name,
+      name: company,
       address: address,
       city: city,
       state: state,
@@ -170,9 +173,16 @@
       STime: STime,
       ETime: ETime,
       timestamp: Date.now()
-  });
+  })
+  .then(() => {
+    alert('Event created successfully!');
+    window.location.href = `index.html?company=${company}`;
+})
+.catch((error) => {
+    console.error("Error writing to Firebase:", error);
+    alert("Failed to create event. Check console for error.");
+});
     document.getElementById("dataEntry").reset();
-    window.location.href = `index.html?company=${company}`
   });
 </script>
 
