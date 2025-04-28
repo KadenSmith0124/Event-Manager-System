@@ -73,7 +73,7 @@
       if (userCompany) {
         console.log("Company found: ", userCompany);
         alert("User signed in!");
-        window.location.href = `index.html?email=${encodeURIComponent(user.email)}&company=${encodeURIComponent(userCompany)}`;
+        window.location.href = `index.html?company=${encodeURIComponent(userCompany)}`;
       } else {
         alert("Company info not found for this user.");
       }

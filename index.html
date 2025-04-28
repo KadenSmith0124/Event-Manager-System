@@ -14,10 +14,10 @@
 <body>
   <div id="container">
     <header>
-      <a href="index.html"><img src="images/logo.png" alt="Munky Bizness logo"></a>
+      <a href="index.html" id="logo"><img src="images/logo.png" alt="Munky Bizness logo"></a>
     </header>
     <nav>
-      <ul>
+      <ul id="navList">
         <li style="float:right;" id="authButton"><a href="login.html">SIGN IN</a></li>
       </ul>
     </nav>
@@ -59,7 +59,7 @@
   <script type="module">
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
@@ -79,11 +79,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
     }
-
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const database = getDatabase(app);
-    const company = getQueryParam("company").replace(/"/g, '');
+    var company = getQueryParam("company")
+    if (company != null) {
+      company = company.replace(/"/g, '');
+    }
     function generateYearRange(start, end) {
         let years = "";
         for (let year = start; year <= end; year++) {
@@ -91,6 +93,27 @@
         }
         return years;
     }
+
+    onAuthStateChanged(auth, (user) => {
+      const logo = document.getElementById("logo")
+      logo.innerHTML = `<a href="index.html?company=${company}" id="logo"><img src="images/logo.png" alt="Munky Bizness logo"></a>`;
+      const navList = document.getElementById("navList");
+
+    if (user) {
+      navList.innerHTML = `
+    <li style="float: right;" id="logout"><a href="login.html">Log Out</a></li>
+    <li style="float: right;"><a href="profile.html?company=${company}">${user.displayName || "Profile"}</a></li>
+  `;    }
+    document.getElementById("logout").addEventListener("click", (e) => {
+      e.preventDefault();
+      signOut(auth).then(() => {
+        window.location.href = "login.html"; // Redirect after logout
+      }).catch((error) => {
+        console.error("Sign-out error:", error);
+        alert("Error signing out. Try again.");
+      });
+    });
+    });
 
 
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -119,40 +142,47 @@
     }
 }
 
-    function renderCalendar(year, month, events) {
-        const firstDayOfMonth = new Date(year, month, 1);
-        const lastDayOfMonth = new Date(year, month + 1, 0);
-        const daysInMonth = lastDayOfMonth.getDate();
-        const startingDay = firstDayOfMonth.getDay();
-        let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
-        let dayCounter = 1;
-        for (let i = 0; i < 6; i++) {
-            table += '<tr>';
-            for (let j = 0; j < 7; j++) {
-                if (i === 0 && j < firstDayOfMonth) {
-                } else if (dayCounter <= daysInMonth) {
-                    let formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
-                    let eventName = events[company + " " + formattedDate] ? `"${events[company + " " + formattedDate].name}"` : ""
-                    let eventTime = events[company + " " + formattedDate] ? `from: ${events[company + " " + formattedDate].STime}-${events[company + " " + formattedDate].ETime}` : "";
-                    let eventAdd =  events[company + " " + formattedDate] ?  `at ${events[company + " " + formattedDate].address} ${events[company + " " + formattedDate].city}, ${events[company + " " + formattedDate].state}`: ""; 
-                    let eventRoom = events[company + " " + formattedDate] ?  `Room #:${events[company + " " + formattedDate].room}` : "";
-                    table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`
-                    if (eventName != "") {
-                        table += `<details id="evText">${eventName}
-                          ${eventTime}\n${eventAdd}\n${eventRoom}
-                        <summary>${company + " " + formattedDate}</summary></details>`
-                      }
-                      table += `</td>`;
-                    dayCounter++;
-                } else {
-                    table += '<td></td>';
+function renderCalendar(year, month, events) {
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const daysInMonth = lastDayOfMonth.getDate();
+    const startingDay = firstDayOfMonth.getDay();
+
+    let table = '<tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>';
+    let dayCounter = 1;
+    let done = false;
+
+    while (!done) {
+        table += '<tr>';
+        for (let i = 0; i < 7; i++) {
+            if (dayCounter === 1 && i < startingDay) {
+                table += '<td></td>';
+            } else if (dayCounter > daysInMonth) {
+                table += '<td></td>';
+                done = true; // Mark done but finish current row
+            } else {
+                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayCounter).padStart(2, '0')}`;
+                const event = events[company + " " + formattedDate];
+                const eventName = event ? `"${event.name}"` : "";
+                const eventTime = event ? `from: ${event.STime}-${event.ETime}` : "";
+                const eventAdd = event ? `at ${event.address} ${event.city}, ${event.state}` : "";
+                const eventRoom = event ? `Room #: ${event.room}` : "";
+
+                table += `<td class="calendar-cell" data-date="${formattedDate}\n">${dayCounter}`;
+                if (eventName) {
+                    table += `<details id="evText">${eventName}
+                        ${eventTime}\n${eventAdd}\n${eventRoom}
+                        <summary>${company + " " + formattedDate}</summary></details>`;
                 }
+                table += '</td>';
+                dayCounter++;
             }
-            table += '</tr>';
         }
+        table += '</tr>';
+    }
 
-        document.getElementById("calendar-body").innerHTML = table;
-
+    document.getElementById("calendar-body").innerHTML = table;
+    
         // Add event listeners to each cell
         document.querySelectorAll(".calendar-cell").forEach(cell => {
             cell.addEventListener("click", function () {
@@ -163,7 +193,7 @@
       document.getElementById("modalDate").innerText = `Create Event on ${selectedDate}`;
         const createEventBtn = document.getElementById("createEventBtn");
           createEventBtn.onclick = function ()  {
-            window.location.href = `create_event.html?date=selectedDate`
+            window.location.href = `create_event.html?date=${selectedDate}&company=${company}` 
             };
             document.getElementById("eventModal").style.display = "flex";
            }
@@ -225,7 +255,9 @@
           }
         });
     });
+    
 });
+
   </script>
 </body>
 </html>

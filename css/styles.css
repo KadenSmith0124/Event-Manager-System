@@ -27,6 +27,7 @@ nav a:hover{background-color: #009db6; border: 2px; border-color: #c1deee; borde
 main{clear: left; background-color: #fff; padding: 2%; font-size: 1.25em;}
 p{font-size: 0.5em;}
 span{text-decoration: underline;}
+select{width: 5%}
 
 .modal {
     font-family: Lucida, Arial, sans-serif;

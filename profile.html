@@ -17,9 +17,13 @@
 <body>
     <div id="container">
         <header style="display: inline-block;">
-            <a href="index.html"><img src="images/logo.png" alt="Munky Bizness logo"></a>
+            <a href="index.html" id="logo"><img src="images/logo.png" alt="Munky Bizness logo"></a>
         </header>
-
+        <nav>
+        <ul id="navList">
+          <li style="float:right;" id="authButton"><a href="login.html">SIGN IN</a></li>
+        </ul>
+        </nav>
         <main style="text-align: center;">
             <div class="container">
 
@@ -29,14 +33,12 @@
                     </label>
                   
                     <label for="company"><b>Company Name</b>
-                        <p>CompanyPlaceholder</p>
+                        <p id="userCompany"></p>
                     </label>
 
                     <label for="email"><b>Email</b>
                         <p id="userEmail">Loading...</p>
                       </label>
-
-                    <label for="password"><b>Password</b></label>
                 </form>
 
             </div>
@@ -45,8 +47,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-      
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+        import { getDatabase, get, ref, child } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";;
+
         const firebaseConfig = {
           apiKey: "AIzaSyCFcAzIbkyu33GuRAS_oYtc6IUlmxqFEdM",
           authDomain: "evnt-320a0.firebaseapp.com",
@@ -56,22 +59,48 @@
           appId: "1:146980889296:web:85312e3d4a0c3f396d74d5"
         };
       
-        // ✅ Initialize Firebase
         const app = initializeApp(firebaseConfig);
-      
+        const database = getDatabase();
         const auth = getAuth(app);
-      
-        onAuthStateChanged(auth, (user) => {
+        const dbRef = ref(database);
+
+
+        onAuthStateChanged(auth, async (user) => {
+
           console.log("Auth user:", user);
-      
           if (user) {
-            document.getElementById("userName").textContent = user.displayName || "No name set";
-            document.getElementById("userEmail").textContent = user.email || "No email set"; // Show email
-          } else {
-            document.getElementById("userName").textContent = "Guest";
-          }
-        });
-        
+            try {
+              const snapshot = await get(child(dbRef, 'login/' + user.uid));
+              let userCompany = snapshot.val()?.company;
+              document.getElementById("userName").textContent = user.displayName || "No name set";
+              document.getElementById("userEmail").textContent = user.email || "No email set";
+              document.getElementById("userCompany").textContent = userCompany || "No Company set";
+            } catch (error) {
+              console.error("Error fetching user data:", error);
+            }
+            } else {
+              document.getElementById("userName").textContent = "Guest";
+              document.getElementById("userEmail").textContent = "Not logged in";
+              document.getElementById("userCompany").textContent = "N/A";
+            }
+            const navList = document.getElementById("navList");
+
+if (user) {
+  const logo = document.getElementById("logo")
+  logo.innerHTML = `<a href="index.html?company=${userCompany.textContent}" id="logo"><img src="images/logo.png" alt="Munky Bizness logo"></a>`;
+  navList.innerHTML = `
+<li style="float: right;" id="logout"><a href="login.html">Log Out</a></li>
+`;    }
+document.getElementById("logout").addEventListener("click", (e) => {
+  e.preventDefault();
+  signOut(auth).then(() => {
+    window.location.href = "login.html"; // Redirect after logout
+  }).catch((error) => {
+    console.error("Sign-out error:", error);
+    alert("Error signing out. Try again.");
+  });
+});
+});
       </script>
       
   
